@@ -1,0 +1,97 @@
+.auto-complete{
+    position: absolute;
+    background: #fff;
+    width: 100%;
+    margin-top: 48px;
+    padding: 4px;
+    border-bottom-left-radius: 10px;
+    border: 1px solid #d6d1d1;
+    max-height: 200px;
+    overflow-x: auto;
+    overflow-y: scroll;
+    z-index: 99;
+    .search-history{
+        margin-bottom: 10px;
+        .caps{
+            color:#bebebe;
+            font-size: 12px;
+        }
+        .clear{
+            float: right;
+            margin-top: -20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    }
+    &:hover{
+        &::-webkit-scrollbar{
+            width: 8px;     
+        }
+        &::-webkit-scrollbar-thumb{
+            background: #bebebe;
+            border-radius: 20px; 
+        }
+        &::-webkit-scrollbar-track{
+            background: #ddd;
+            border-radius: 20px; 
+        }
+    }
+    li{
+        list-style: none;
+        padding: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #7c7c7c;
+        border-left: 4px solid #ffffff;
+       
+        &:hover{
+            // background: #f3f3f3;
+            border-bottom: 1px solid #c4c4c4;
+            border-left: 4px solid #c4c4c4;
+            box-shadow: 0 0.1rem 0.2rem 0 #e7e7e7;
+            // border-radius: 4px;
+        }
+    }
+
+    .history-list{
+       background: #faffbd;
+    }
+}
+
+.auto-complete::-webkit-scrollbar{
+    width: 8px;     
+}
+
+.loading-search{
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 86px;
+    color: #bfbfbf;
+    &:after{
+        content: 'Loading';
+        animation: loading-text 1s infinite;
+    }
+}
+
+@keyframes loading-text
+{
+    0%{
+        content: "Loading"
+    }
+    25%{
+        content: "Loading."
+    }
+    50%{
+        content: "Loading.."
+    }
+    75%{
+        content: "Loading..."
+    }
+}
+
+.search-mtop{
+    margin-top: 40px !important;
+}
+  

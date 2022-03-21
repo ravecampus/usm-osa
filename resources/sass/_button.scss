@@ -1,0 +1,92 @@
+.btn-item-default{
+    background: $default-color;
+    box-shadow: none !important;
+    border-radius: 2rem !important;
+    border: 1px solid $default-color !important;
+    color: #fff;
+    &:focus{
+        background: $default-last;
+        border: 1px solid $default-color;
+        box-shadow: .2rem .2rem .5rem #aaaaaa !important;
+        color: #fff !important;
+    }
+    &:hover{
+        background: $default-last;
+        border: 1px solid $default-color;
+        box-shadow: .2rem .2rem .5rem #aaaaaa !important;
+        color: #fff !important;
+    }
+}
+
+.btn-item-warning{
+    background: $default-color;
+    border-radius: 2rem !important;
+    &:focus{
+        background: $default-color-second;
+        border: 1px solid $default-color;
+        box-shadow: .2rem .2rem .5rem #aaaaaa !important;
+    }
+    &:hover{
+        background: $default-color-second;
+        border: 1px solid $default-color;
+        box-shadow: .2rem .2rem .5rem #aaaaaa !important;
+    }
+}
+
+.btn-item-success{
+    background: $btn-add-cart;
+    border-radius: 2rem !important;
+    color: #fff;
+    &:focus{
+        background: $btn-add-cart-focus;
+        border: 1px solid $btn-add-cart;
+        box-shadow: .2rem .2rem .2rem #aaaaaa !important;
+    }
+    &:hover{
+        background: $btn-add-cart-focus;
+        border: 1px solid $btn-add-cart;
+        box-shadow: .2rem .2rem .2rem #aaaaaa !important;
+    }
+}
+
+.btn-delete{
+    padding: 0.2rem 0.4rem !important;
+    font-size: 0.7rem !important;
+}
+
+.delete-text{
+    font-weight: bold;
+    font-size: 0.8rem;
+    padding: .2rem;
+}
+
+.group-quantit-btn{
+    margin: 0;
+    padding:0;
+    margin-bottom: .9rem;
+    .btn{
+        height: 2rem;
+        width: 2rem;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 0;
+        box-shadow: none !important;
+        &:focus{
+            box-shadow: .2rem .2rem .5rem #aaaaaa !important;
+        }
+        &:hover{
+            box-shadow: .2rem .2rem .5rem #aaaaaa !important;
+        }
+    }
+    input{
+        width: 3rem;
+        height: 2rem;
+        margin: 0 !important;
+        padding: 0 !important;
+        text-align: center;
+        &:focus{
+            outline: none;
+            box-shadow: none !important;
+        }
+    }
+}

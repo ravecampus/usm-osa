@@ -1,0 +1,52 @@
+.card{
+    box-shadow: 0 0.1rem 0.2rem 0 rgba(0, 0, 0, 0.1);
+}
+.form-material{
+	position: relative;
+}
+
+.form-material input{
+    border: 0  !important;
+	width:100%;
+	padding: 10px 0;
+	font-size: 16px;
+    margin-bottom:30px;
+	border-bottom: 1px solid #ccc !important;
+	outline:none;
+    background:transparent;
+    box-shadow: none !important;
+    &:focus ~ label{
+        top:-18px;
+        left:0;
+        color: #777777;
+        font-size: 12px;
+    }
+    &:valid  ~ label{
+        top:-18px;
+        left:0;
+        color: #777777;     
+        font-size: 12px;
+    }
+    &:focus{
+        border-bottom: 2px solid #777777 !important;
+        transition: border-bottom-color 0.15s linear 1s;
+    }
+}
+
+.form-material label{
+	position:absolute;
+	top:0;
+	left:0;
+	padding: 10px 0;
+	font-size:16px;
+	color:#ccc;
+	pointer-events:none;
+    transition: .5s ease-in-out;
+}
+.btn{
+    box-shadow: 0 0.3rem 0.2rem 0 rgba(0, 0, 0, 0.1) !important;
+
+}
+.card-margin{
+    flex:none !important;
+}

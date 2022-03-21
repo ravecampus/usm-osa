@@ -1,0 +1,120 @@
+
+    /* show 3 items */
+    .c-carousel{
+        .c-carousel-inner .active,
+        .c-carousel-inner .active + .c-carousel-item,
+        .c-carousel-inner .active + .c-carousel-item + .c-carousel-item,
+        .c-carousel-inner .active + .c-carousel-item + .c-carousel-item + .c-carousel-item
+        {
+            display: inline-block;
+        }
+        
+        .c-carousel-inner .c-carousel-item.active:not(.carousel-item-right):not(.carousel-item-left),
+        .c-carousel-inner .c-carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .c-carousel-item,
+        .c-carousel-inner .c-carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .c-carousel-item + .c-carousel-item,
+        .c-carousel-inner .c-carousel-item.active:not(.carousel-item-right):not(.carousel-item-left) + .c-carousel-item + .c-carousel-item + .c-carousel-item
+        {
+            transition: none;
+        }
+        
+        .c-carousel-inner .carousel-item-next,
+        .c-carousel-inner .carousel-item-prev {
+        position: relative;
+        transform: translate3d(0, 0, 0);
+        }
+        
+        .c-carousel-inner .active.c-carousel-item + .c-carousel-item + .c-carousel-item + .c-carousel-item + .c-carousel-item 
+        // + .carousel-item
+        {
+            position: absolute;
+            top: 0;
+            right: -25%;
+            z-index: -1;
+            display: block;
+            visibility: visible;
+        }
+        
+        /* left or forward direction */
+        .active.carousel-item-left + .carousel-item-next.carousel-item-left,
+        .carousel-item-next.carousel-item-left + .c-carousel-item,
+        .carousel-item-next.carousel-item-left + .c-carousel-item + .c-carousel-item,
+        .carousel-item-next.carousel-item-left + .c-carousel-item + .c-carousel-item + .c-carousel-item,
+        .carousel-item-next.carousel-item-left + .c-carousel-item + .c-carousel-item + .c-carousel-item + .c-carousel-item 
+        {
+            position: relative;
+            transform: translate3d(-100%, 0, 0);
+            visibility: visible;
+        }
+        
+        /* farthest right hidden item must be abso position for animations */
+        .c-carousel-inner .carousel-item-prev.carousel-item-right {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            display: block;
+            visibility: visible;
+        }
+        
+        /* right or prev direction */
+        .active.carousel-item-right + .carousel-item-prev.carousel-item-right,
+        .carousel-item-prev.carousel-item-right + .c-carousel-item,
+        .carousel-item-prev.carousel-item-right + .c-carousel-item + .c-carousel-item,
+        .carousel-item-prev.carousel-item-right + .c-carousel-item + .c-carousel-item + .c-carousel-item,
+        .carousel-item-prev.carousel-item-right + .c-carousel-item + .c-carousel-item + .c-carousel-item + .c-carousel-item
+        {
+            position: relative;
+            transform: translate3d(100%, 0, 0);
+            visibility: visible;
+            display: block;
+            visibility: visible;
+        }
+    }
+    
+
+    .carousel-indicators{
+        .active{
+            .sub-image{
+                border: 1px solid #fff;
+            }
+        }
+
+        .sub-image{
+            // width: 10rem  !important;
+        }
+    }
+
+    .carousel-control-prev{
+        .custom-arrow{ 
+            background: #fff;
+            color: $color-n;
+            height: auto;
+            width: auto;
+            padding:2rem;
+            text-align: center;
+            .fa{
+                font-weight: bold;
+                font-size: 4rem;
+                margin:0;
+                // padding-left: 1rem;
+            }
+        }
+       
+    }
+
+    .carousel-control-next{
+        .custom-arrow{ 
+            background: #fff;
+            color: $color-n;
+            height: auto;
+            width: auto;
+            padding: 2rem;
+            text-align: center;
+            .fa{
+                font-weight: bold;
+                font-size: 4rem;
+                margin:0;
+                // padding-right: 2rem;
+            }
+        }
+    }
