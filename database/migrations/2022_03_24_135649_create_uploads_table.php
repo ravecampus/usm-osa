@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFiledDocsTable extends Migration
+class CreateUploadsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateFiledDocsTable extends Migration
      */
     public function up()
     {
-        Schema::create('filed_docs', function (Blueprint $table) {
+        Schema::create('uploads', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('college_department_id');
-            $table->foreign('college_department_id')->references('id')->on('college_departments')->onDelete('cascade');
-            $table->unsignedBigInteger('org_id');
-            $table->foreign('org_id')->references('id')->on('orgs')->onDelete('cascade');
+            $table->text('link')->nullable();
+            $table->string('slug')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('file_id');
+            $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ class CreateFiledDocsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('filed_docs');
+        Schema::dropIfExists('uploads');
     }
 }

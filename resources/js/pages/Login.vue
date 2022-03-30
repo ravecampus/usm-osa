@@ -55,7 +55,7 @@ export default {
         handleSubmit(e) {
             // e.preventDefault()
             
-                this.$axios.get('/sanctum/csrf-cookie').then(response => {
+                this.$axios.get('sanctum/csrf-cookie').then(response => {
                     this.login = "Logging...";
                     this.$axios.post('api/login',this.post)
                         .then(response => {

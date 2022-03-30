@@ -26,6 +26,7 @@
         "jquery": "^3.6.0",
         "popper.js": "^1.12",
         "vue": "^3.2.31",
-        "vue-router": "^4.0.13"
+        "vue-router": "^4.0.13",
+        "vue3-dropzone": "0.0.7"
     }
 }

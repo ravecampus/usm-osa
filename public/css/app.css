@@ -509,8 +509,14 @@ a {
   }
 }
 
+.img-icon {
+  width: 3%;
+}
+
 .linkTable:hover {
   box-shadow: 0.2rem 0.2rem 0.3rem #e7e7e7 !important;
+}
+.linkTable .hand {
   cursor: pointer;
 }
 
@@ -1475,6 +1481,10 @@ input[type=number]:focus,
     opacity: 0;
   }
 }
+.card-height {
+  min-height: 720px !important;
+}
+
 .card-user {
   width: 18rem;
   margin-bottom: 0.4rem;

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Department;
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 
-class DepartmentController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,17 +16,17 @@ class DepartmentController extends Controller
      */
     public function index(Request $request)
     {
-        $columns = ['created_at', 'department', 'shortname', 'id'];
+        $columns = ['created_at', 'description', 'abbreviation', 'id'];
         $length = $request->length;
         $column = $request->column;
         $dir = $request->dir;
         $searchValue = $request->search;
-        $query = Department::orderBy($columns[$column], $dir);
+        $query = Category::orderBy($columns[$column], $dir);
     
         if($searchValue){
             $query->where(function($query) use ($searchValue){
-                $query->where('department', 'like', '%'.$searchValue.'%')
-                ->orWhere('shortname', 'like', '%'.$searchValue.'%');
+                $query->where('description', 'like', '%'.$searchValue.'%')
+                ->orWhere('abbreviation', 'like', '%'.$searchValue.'%');
             });
         }
         $projects = $query->paginate($length);
@@ -52,14 +52,15 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'department'=>'required',
-            'shortname'=>'required',
+            'description'=>'required|unique:categories',
+            'abbreviation'=>'required',
 
         ]);
 
-        $org = Department::create([
-            'department'=>$request->department,
+        $org = Category::create([
+            'description'=>$request->description,
             'shortname'=>$request->shortname,
+            'abbreviation'=>$request->abbreviation,
             'user_id'=>Auth::id()
         ]);
         return response()->json($org, 200);
@@ -73,7 +74,8 @@ class DepartmentController extends Controller
      */
     public function show($id)
     {
-        //
+       $cat = Category::find($id);
+       return response()->json($cat, 200);
     }
 
     /**
@@ -96,16 +98,11 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'department' => 'required',
-            'shortname' => 'required',
-        ]);
-        
-        $dep = Department::find($id);
-        $dep->department = $request->department;
-        $dep->shortname = $request->shortname;
-        $dep->save();
-        return response()->json($dep, 200);
+            $categ = Category::find($id);
+            $categ->description = $request->description;
+            $categ->abbreviation = $request->abbreviation;
+            $categ->save();
+            return response()->json($categ, 200);
     }
 
     /**

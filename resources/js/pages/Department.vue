@@ -152,7 +152,7 @@
         },
         methods:{
             saveDepart(){
-                this.$axios.get('/sanctum/csrf-cookie').then(response => {
+                this.$axios.get('sanctum/csrf-cookie').then(response => {
                     this.btn_cap = 'Saving...'
                     if(this.post.id == undefined){
                         this.$axios.post('api/department', this.post).then(res=>{
@@ -185,7 +185,7 @@
                 $('.add-department').modal('show');
             },
             listOfDepartment(url='api/department'){
-                this.$axios.get('/sanctum/csrf-cookie').then(response => {
+                this.$axios.get('sanctum/csrf-cookie').then(response => {
                     this.tableData.draw ++;
                     this.$axios.get(url,{params:this.tableData}).then(res=>{
                     let data = res.data;

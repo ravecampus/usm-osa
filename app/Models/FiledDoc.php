@@ -5,20 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Organization extends Model
+class FiledDoc extends Model
 {
     use HasFactory;
 
-    protected $table = 'organizations';
+    protected $table = 'files';
 
     protected $fillable = [
-        'name',
+        'filename',
         'description',
-        'abbreviation',
-        'status',
+        'date_filed',
         'deleted',
+        'status',
+        'org_id',
         'user_id',
-        'category_id',
     ];
-
 }

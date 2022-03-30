@@ -6,6 +6,7 @@ import axios from 'axios'
 import router from './router'
 
 window.Title ={'app_name':process.env.MIX_APP_NAME};
+axios.defaults.baseURL = '/';
 
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;

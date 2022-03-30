@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\OrganizationController;
-use App\Http\Controllers\API\DepartmentController;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\FiledDocController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,5 +36,6 @@ Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanct
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/org', OrganizationController::class);
-    Route::resource('/department', DepartmentController::class);
+    Route::resource('/category', CategoryController::class);
+    Route::resource('/filed-docs', FiledDocController::class);
 });

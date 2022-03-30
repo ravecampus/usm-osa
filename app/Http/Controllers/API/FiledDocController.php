@@ -4,20 +4,18 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Models\Organization;
+use Illuminate\Support\Facades\Storage;
 
-class OrganizationController extends Controller
+class FiledDocController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-       
+        //
     }
 
     /**
@@ -39,19 +37,22 @@ class OrganizationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required|unique:organizations',
-            'description'=>'nullable',
-            'abbreviation'=>'required',
+            'name'=>'required'
         ]);
 
-        $org = Organization::create([
-            'name'=>$request->name,
-            'description'=>$request->description,
-            'abbreviation'=>$request->abbreviation,
-            'category_id'=>$request->category_id,
-            'user_id'=>Auth::id()
-        ]);
-        return response()->json($org, 200);
+        if($request->hasFile('file')){
+            $files = $request->file('file');
+            // dd($files);
+            foreach ($files as $file) {
+                $filename = $file->getClientOriginalName();
+                // $path = $file->store("you",'images');
+                // Storage::disk('public')->put($filename, 'images');
+                $name = now()->timestamp.".{$file->getClientOriginalName()}";
+                $path = $file->storeAs('files', $name, 'public');
+            }
+        }else{
+            return response()->json(['errors'=>['file' => ['The field File is required.']]], 422);
+        }
     }
 
     /**
@@ -60,22 +61,9 @@ class OrganizationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id)
+    public function show($id)
     {
-        $columns = ['created_at', 'department', 'id'];
-        $length = $request->length;
-        $column = $request->column;
-        $dir = $request->dir;
-        $searchValue = $request->search;
-        $query = Organization::where('category_id',$id)->orderBy($columns[$column], $dir);
-    
-        if($searchValue){
-            $query->where(function($query) use ($searchValue){
-                $query->where('description', 'like', '%'.$searchValue.'%');
-            });
-        }
-        $projects = $query->paginate($length);
-        return ['data'=>$projects, 'draw'=> $request->draw];
+        //
     }
 
     /**

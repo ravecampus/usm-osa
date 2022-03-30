@@ -75,19 +75,19 @@
                                         </div>
                                     </li> -->
                                     <li class="nav-item"  v-if="secure">
-                                        <router-link class="nav-link" href="#" :to="{name:'orgs'}" role="button" >
+                                        <router-link class="nav-link" href="#" :to="{name:'category'}" role="button" >
                                             <i class="fa fa-dashboard"></i> 
                                             <span> DASHBOARD</span>
                                         </router-link>
                                        
                                     </li>
-                                    <li class="nav-item"  v-if="secure">
+                                    <!-- <li class="nav-item"  v-if="secure">
                                         <router-link class="nav-link" href="#" :to="{name:'department'}" role="button" >
                                             <i class="fa fa-plus-circle"></i> 
                                             <span> COLLEGE DEPARTMENT</span>
                                         </router-link>
                                        
-                                    </li>
+                                    </li> -->
                                     <li class="nav-item dropdown" v-if="secure">
                                         <a id="navbarDrop1" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fa fa-gear"></i> 
@@ -114,7 +114,6 @@
                     </div>
                 </div>
             </main>
-          
         </div>
 </template>
 <script>
@@ -186,7 +185,6 @@
                   this.user = window.Laravel.user;          
             },
             logout(){
-                console.log('ss')
                 this.$axios.get('/sanctum/csrf-cookie').then(response => {
                     this.$axios.post('/api/logout')
                         .then(response => {

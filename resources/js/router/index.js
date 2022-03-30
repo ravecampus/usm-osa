@@ -4,9 +4,10 @@ import Home from '../pages/Home';
 import Notfound from '../pages/Notfound';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
-import OrgsList from '../pages/home/OrgsList';
-import FileDocs from '../pages/home/FileDoc';
-import Department from '../pages/Department';
+import Category from '../pages/home/Category';
+import Form from '../pages/home/Form';
+import Organizations from '../pages/home/Organizations';
+import Files from '../pages/home/File';
 
 
 export const routes = [
@@ -16,22 +17,32 @@ export const routes = [
         component: Home,
         children:[
             {
-                name:'orgs',
+                name:'category',
                 path:'',
-                component: OrgsList
+                component: Category
             },
             {
-                name:'filedocs',
-                path:'/file-docs/',
-                component: FileDocs
+                name:'fillupform',
+                path:'/fillup-form/:id',
+                component: Form,
+                params:true
 
-            }
+            },
+            {
+                name:'orgs',
+                path:'/orgs/:id',
+                component: Organizations,
+                params:true,
+
+            },
+            {
+                name:'files',
+                path:'/files/:id/org/:org_id',
+                component: Files,
+                props:true
+
+            },
         ]
-    },
-    {
-        name: 'department',
-        path: '/department',
-        component: Department
     },
     {
         name: 'register',
@@ -49,7 +60,7 @@ export const routes = [
     //     component: Dashboard
     // },
     {
-        path: '/*',
+        path: '/:pathMatch(.*)*',
         name:'/notfound',
         component: Notfound
     },

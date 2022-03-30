@@ -13,8 +13,16 @@
                     </div>
                     <nav>
                         <ul class="pagination">
-                            <li v-bind:class="{disabled:!pagination.prevPageUrl}" class="page-item"><a  @click="$emit('prev')"  class="page-link btn-sm">Prev</a></li>
-                            <li v-bind:class="{disabled:!pagination.nextPageUrl}" class="page-item"><a  @click="$emit('next')"  class="page-link btn-sm">Next</a></li>
+                            <li v-bind:class="{disabled:!pagination.prevPageUrl}" class="page-item">
+                                <a  @click="$emit('prev')"  class="page-link page-link-sm">
+                                    <span class="fa fa-angle-left"></span>
+                                </a>
+                            </li>
+                            <li v-bind:class="{disabled:!pagination.nextPageUrl}" class="page-item">
+                                <a  @click="$emit('next')"  class="page-link btn-link-sm">
+                                     <span class="fa fa-angle-right"></span>
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </div>

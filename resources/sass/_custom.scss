@@ -1,6 +1,13 @@
+.img-icon{
+    width: 3%;
+}
+
 .linkTable{
     &:hover{
         box-shadow: .2rem .2rem .3rem #e7e7e7 !important;
+       
+    }
+    .hand{
         cursor:pointer;
     }
 }

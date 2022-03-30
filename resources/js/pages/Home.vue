@@ -4,17 +4,17 @@
            <div class="card">
                <div class="card-body">
                    <div class="btn-group">
-                        <button type="button" class="btn btn-success" @click="showAddModalOrg">
+                        <button :disabled="btn_enable" type="button" class="btn btn-success" @click="showAddModalOrg">
                         <span class="fa fa-plus-circle"></span>
-                        ADD ORGANIZATION
+                        ORG. CATEGORY
                         </button>
-                        <button type="button" class="btn btn-success" @click="navButton(1)">
+                        <button type="button" :disabled="btn_cat" class="btn btn-success" @click="navButton(1)">
                         <span class="fa fa-list"></span>
-                         ORGS
+                         ORG. CATEGORIES
                         </button>
                         <button type="button" class="btn btn-success" @click="navButton(2)">
-                        <span class="fa fa-list"></span>
-                         DOCS
+                        <span class="fa fa-archive"></span>
+                        Archive
                         </button>
                    </div>
                </div>
@@ -23,11 +23,11 @@
            </div>
        </div>
 
-        <div class="modal add-org">
+        <div class="modal add-categ">
           <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                      <h4>ORGANIZATION</h4>
+                      <h4>ORGANIZATION CATEGORY</h4>
                   </div>
                   <div class="modal-body">
                       <div class="row">
@@ -36,6 +36,11 @@
                                   <label>Description</label>
                                   <input type="text" v-model="post.description" class="form-control">
                                   <span class="errors-material" v-if="errors.description">{{errors.description[0]}}</span>
+                              </div>
+                              <div class="form-group">
+                                  <label>Abbreviation</label>
+                                  <input type="text" v-model="post.abbreviation" class="form-control">
+                                  <span class="errors-material" v-if="errors.abbreviation">{{errors.abbreviation[0]}}</span>
                               </div>
                                <!-- <div class="form-group">
                                   <label>Header Title</label>
@@ -46,7 +51,7 @@
                   </div>
                   <div class="modal-footer">
                       <div class="btn-group">
-                          <button type="button" :disabled="btn_enable" @click="saveOrg"  class="btn btn-success">{{ btn_cap }}</button>
+                          <button type="button"  @click="saveOrg"  class="btn btn-success">{{ btn_cap }}</button>
                           <button type="button" data-dismiss="modal"  class="btn btn-default">Cancel</button>
                       </div>
                   </div>
@@ -67,7 +72,7 @@ export default {
     },
     data() {
         return {
-            orgs:[],
+            // orgs:[],
             post:{ description:'',},
             btn_enable:false,
             btn_cap:'Save',
@@ -75,21 +80,43 @@ export default {
             auth:false,
         }
     },
+    watch: { 
+     '$route.name': {
+        handler: function(data) {
+            if(data == 'orgs' || data == 'fillupform'){
+                this.btn_enable = true;
+            }else{
+                this.btn_enable = false;
+            }
+
+            if(data == 'category'){
+                this.btn_cat = true;
+            }else{
+                this.btn_cat = false;
+            }
+           
+        },
+        deep: true,
+        immediate: true
+      }
+    },
     created() {
-      this.hiddenModal()
+      this.hiddenModal();
     },
     methods: {
         showAddModalOrg(){
-            $('.add-org').modal('show')
+            $('.add-categ').modal('show')
         },
         saveOrg(){
-            this.$axios.get('/sanctum/csrf-cookie').then(response => {
+            this.$axios.get('sanctum/csrf-cookie').then(response => {
                 this.btn_cap = 'Saving...'
-                this.$axios.post('api/org', this.post).then(res=>{
+                this.$axios.post('api/category', this.post).then(res=>{
                     this.post = {};
                     this.btn_cap ='Save'
-                    this.orgs.unshift(res.data);
-                    $('.add-org').modal('hide')
+                    let id = res.data.id;
+                    this.$router.push({name:'fillupform', params:{'id':id}});
+                    this.btn_enable = true;
+                    $('.add-categ').modal('hide')
                 }).catch(err=>{
                     this.errors = err.response.data.errors
                     this.error = '';
@@ -101,9 +128,9 @@ export default {
         navButton(num){
             if(num == 1){
                 // router.push({ name: 'home', params: { username: 'erina' } })
-                this.$router.push({ name: 'orgs', });
+                this.$router.push({ name: 'category', });
             }else if(num == 2){
-                this.$router.push({ name: 'filedocs', });
+                this.$router.push({ name: 'orgs', });
             }
         },
         hiddenModal(){

@@ -54,7 +54,7 @@ export default {
     },
     methods: {
         handleSubmit(e) {
-            axios.get('/sanctum/csrf-cookie').then(response => {
+            axios.get('sanctum/csrf-cookie').then(response => {
                 this.register = "Creating...";
                 axios.post('api/register',this.post)
                     .then(response => {
