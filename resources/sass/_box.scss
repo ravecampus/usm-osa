@@ -1,3 +1,10 @@
+.box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // height: 200px;
+}
+
 .box-account{
     background: #ffffff;
     box-shadow: 0 0.1rem 0.2rem 0 rgba(0, 0, 0, 0.1);

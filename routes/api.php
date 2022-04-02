@@ -6,6 +6,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\OrganizationController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\FiledDocController;
+use App\Http\Controllers\API\UploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +39,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/org', OrganizationController::class);
     Route::resource('/category', CategoryController::class);
     Route::resource('/filed-docs', FiledDocController::class);
+    Route::get('/download-file/{id}', [UploadController::class, 'downloadFile']);
 });

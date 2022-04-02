@@ -38,12 +38,17 @@ class OrganizationController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
-            'name'=>'required|unique:organizations',
+            'name'=>'required',
             'description'=>'nullable',
             'abbreviation'=>'required',
         ]);
-
+        $chec = Organization::where('name', $request->name)->where('category_id',$request->category_id)->first();
+       
+        if(isset($chec)){
+            return response()->json(['errors'=>['name' => ['The name has already been taken.']]], 422);
+        }
         $org = Organization::create([
             'name'=>$request->name,
             'description'=>$request->description,
@@ -98,7 +103,16 @@ class OrganizationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name'=>'required',
+            'abbreviation' => 'required'
+        ]);
+
+        $org = Organization::find($id);
+        $org->name = $request->name;
+        $org->description = $request->description;
+        $org->abbreviation = $request->abbreviation;
+        $org->save();
     }
 
     /**

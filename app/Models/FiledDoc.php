@@ -20,4 +20,8 @@ class FiledDoc extends Model
         'org_id',
         'user_id',
     ];
+
+    public function files(){
+        return $this->hasMany(Upload::class, 'file_id', 'id')->orderBy('created_at', 'asc');
+    }
 }

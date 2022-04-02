@@ -21,7 +21,7 @@ class CategoryController extends Controller
         $column = $request->column;
         $dir = $request->dir;
         $searchValue = $request->search;
-        $query = Category::orderBy($columns[$column], $dir);
+        $query = Category::where('deleted',0)->orderBy($columns[$column], $dir);
     
         if($searchValue){
             $query->where(function($query) use ($searchValue){

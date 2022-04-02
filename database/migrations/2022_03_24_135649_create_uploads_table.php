@@ -17,6 +17,8 @@ class CreateUploadsTable extends Migration
             $table->id();
             $table->text('link')->nullable();
             $table->string('slug')->nullable();
+            $table->string('original_name')->nullable();
+            $table->string('extension')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('file_id');

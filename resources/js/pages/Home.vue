@@ -23,7 +23,7 @@
            </div>
        </div>
 
-        <div class="modal add-categ">
+        <div class="modal fade add-categ">
           <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
@@ -83,7 +83,7 @@ export default {
     watch: { 
      '$route.name': {
         handler: function(data) {
-            if(data == 'orgs' || data == 'fillupform'){
+            if(data == 'orgs' || data == 'fillupform'|| data == 'files'){
                 this.btn_enable = true;
             }else{
                 this.btn_enable = false;

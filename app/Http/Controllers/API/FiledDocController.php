@@ -5,6 +5,13 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use App\Models\FiledDoc;
+use App\Models\Upload;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+
+
 
 class FiledDocController extends Controller
 {
@@ -13,9 +20,9 @@ class FiledDocController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, $id)
     {
-        //
+        
     }
 
     /**
@@ -37,19 +44,44 @@ class FiledDocController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required'
+            'filename'=>'required'
         ]);
 
+        $chec = FiledDoc::where('filename', $request->filename)->where('org_id',$request->org_id)->first();
+       
+        if(isset($chec)){
+            return response()->json(['errors'=>['filename' => ['The filename has already been taken.']]], 422);
+        }
+        $user_id = Auth::id();
+        $fileD = FiledDoc::create([
+            'filename'=>$request->filename,
+            'description'=>$request->description,
+            'date_filed' => Carbon::today(),
+            'user_id' =>$user_id,
+            'org_id'=>$request->org_id
+
+        ]);
+        // Str::random(8);
         if($request->hasFile('file')){
             $files = $request->file('file');
-            // dd($files);
             foreach ($files as $file) {
+
                 $filename = $file->getClientOriginalName();
-                // $path = $file->store("you",'images');
-                // Storage::disk('public')->put($filename, 'images');
-                $name = now()->timestamp.".{$file->getClientOriginalName()}";
+                $ext = $file->extension();
+                $ran = Str::random(8);
+                $name = now()->timestamp.".{$ran}.".$file->extension();
+                $orgn = explode('.', $filename)[0];
                 $path = $file->storeAs('files', $name, 'public');
+                Upload::create([
+                    'link'=> $name,
+                    'slug'=>$ran,
+                    'original_name'=>$orgn,
+                    'extension'=>$ext,
+                    'user_id'=>$user_id,
+                    'file_id'=>$fileD->id
+                ]);
             }
+            return response()->json($fileD,200);
         }else{
             return response()->json(['errors'=>['file' => ['The field File is required.']]], 422);
         }
@@ -61,9 +93,23 @@ class FiledDocController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request,$id)
     {
-        //
+        $columns = ['created_at', 'filename', 'description', 'id'];
+        $length = $request->length;
+        $column = $request->column;
+        $dir = $request->dir;
+        $searchValue = $request->search;
+        $query = FiledDoc::with('files')->where('org_id', $id)->orderBy($columns[$column], $dir);
+    
+        if($searchValue){
+            $query->where(function($query) use ($searchValue){
+                $query->where('filename', 'like', '%'.$searchValue.'%')
+                ->orWhere('description', 'like', '%'.$searchValue.'%');
+            });
+        }
+        $projects = $query->paginate($length);
+        return ['data'=>$projects, 'draw'=> $request->draw];
     }
 
     /**
@@ -86,7 +132,11 @@ class FiledDocController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $file = FiledDoc::find($id);
+        $file->filename = $request->filename;
+        $file->description = $request->description;
+        $file->save();
+        return response()->json($file, 200);
     }
 
     /**

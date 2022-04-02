@@ -58,7 +58,7 @@
                 </tbody>
                 </data-table>
                 
-                <div class="modal edit-categ">
+                <div class="modal fade edit-categ">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
