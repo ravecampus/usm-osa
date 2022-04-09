@@ -95,6 +95,7 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDrop1">
                                             <a class="dropdown-item"><i class="fa fa-user-plus"></i> Users</a>
+                                            <a class="dropdown-item"><i class="fa fa-user-circle-o"></i> Profile</a>
                                             <a class="dropdown-item"  href="#" v-on:click="logout">
                                                 <i class="fa fa-sign-out"></i>
                                                 Logout

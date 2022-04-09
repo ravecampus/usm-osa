@@ -37,7 +37,9 @@ Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanct
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/org', OrganizationController::class);
+    Route::get('/category/restore/{id}', [CategoryController::class,'restore']);
     Route::resource('/category', CategoryController::class);
     Route::resource('/filed-docs', FiledDocController::class);
     Route::get('/download-file/{id}', [UploadController::class, 'downloadFile']);
+    Route::resource('/uploads', UploadController::class);
 });

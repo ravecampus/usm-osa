@@ -8,6 +8,7 @@ import Category from '../pages/home/Category';
 import Form from '../pages/home/Form';
 import Organizations from '../pages/home/Organizations';
 import Files from '../pages/home/File';
+import Archive from '../pages/home/Archive';
 
 
 export const routes = [
@@ -40,6 +41,12 @@ export const routes = [
                 path:'/files/:id/org/:org_id',
                 component: Files,
                 props:true
+
+            },
+            {
+                name:'archive',
+                path:'/archive/',
+                component: Archive,
 
             },
         ]

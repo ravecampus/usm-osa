@@ -12,7 +12,7 @@
                         <span class="fa fa-list"></span>
                          ORG. CATEGORIES
                         </button>
-                        <button type="button" class="btn btn-success" @click="navButton(2)">
+                        <button type="button" class="btn btn-success" @click="navButton(3)">
                         <span class="fa fa-archive"></span>
                         Archive
                         </button>
@@ -83,7 +83,7 @@ export default {
     watch: { 
      '$route.name': {
         handler: function(data) {
-            if(data == 'orgs' || data == 'fillupform'|| data == 'files'){
+            if(data == 'orgs' || data == 'fillupform'|| data == 'files' || data == 'archive'){
                 this.btn_enable = true;
             }else{
                 this.btn_enable = false;
@@ -131,6 +131,8 @@ export default {
                 this.$router.push({ name: 'category', });
             }else if(num == 2){
                 this.$router.push({ name: 'orgs', });
+            }else if(num == 3){
+                this.$router.push({ name: 'archive', });
             }
         },
         hiddenModal(){

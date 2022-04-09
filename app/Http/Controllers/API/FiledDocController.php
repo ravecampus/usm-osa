@@ -44,7 +44,9 @@ class FiledDocController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'filename'=>'required'
+            'filename'=>'required',
+            'year'=>'required|digits:4|max:2050',
+            'semester'=>'required'
         ]);
 
         $chec = FiledDoc::where('filename', $request->filename)->where('org_id',$request->org_id)->first();
@@ -56,6 +58,8 @@ class FiledDocController extends Controller
         $fileD = FiledDoc::create([
             'filename'=>$request->filename,
             'description'=>$request->description,
+            'year'=>$request->year,
+            'semester'=>$request->semester,
             'date_filed' => Carbon::today(),
             'user_id' =>$user_id,
             'org_id'=>$request->org_id
@@ -93,7 +97,7 @@ class FiledDocController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request,$id)
+    public function show(Request $request, $id)
     {
         $columns = ['created_at', 'filename', 'description', 'id'];
         $length = $request->length;
@@ -132,8 +136,16 @@ class FiledDocController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'filename'=>'required',
+            'year'=>'required|digits:4',
+            'semester'=>'required'
+        ]);
+
         $file = FiledDoc::find($id);
         $file->filename = $request->filename;
+        $file->year = $request->year;
+        $file->semester = $request->semester;
         $file->description = $request->description;
         $file->save();
         return response()->json($file, 200);

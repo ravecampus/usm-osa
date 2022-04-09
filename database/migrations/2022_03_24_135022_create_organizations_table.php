@@ -18,6 +18,9 @@ class CreateOrganizationsTable extends Migration
             $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->string('abbreviation')->nullable();
+            $table->string('registration_number')->nullable();
+            $table->date('organization_first_registered')->nullable();
+            $table->string('adviser')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('category_id');

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Organization;
+use Carbon\Carbon;
 
 class OrganizationController extends Controller
 {
@@ -43,15 +44,28 @@ class OrganizationController extends Controller
             'name'=>'required',
             'description'=>'nullable',
             'abbreviation'=>'required',
+            'registration_number'=>'required',
+            'organization_first_registered'=>'required',
+            'adviser'=>'required',
         ]);
+        $chec2 = Organization::where('registration_number', $request->registration_number)->where('category_id',$request->category_id)->first();
+       
+        if(isset($chec2)){
+            return response()->json(['errors'=>['registration_number' => ['The registration number has already been taken.']]], 422);
+        }
         $chec = Organization::where('name', $request->name)->where('category_id',$request->category_id)->first();
        
         if(isset($chec)){
             return response()->json(['errors'=>['name' => ['The name has already been taken.']]], 422);
         }
+
         $org = Organization::create([
             'name'=>$request->name,
             'description'=>$request->description,
+            'abbreviation'=>$request->abbreviation,
+            'registration_number'=>$request->registration_number,
+            'organization_first_registered'=> Carbon::parse($request->organization_first_registered)->format('Y-m-d'),
+            'adviser'=>$request->adviser,
             'abbreviation'=>$request->abbreviation,
             'category_id'=>$request->category_id,
             'user_id'=>Auth::id()
@@ -104,12 +118,18 @@ class OrganizationController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'registration_number'=>'required',
             'name'=>'required',
+            'organization_first_registered'=>'required',
+            'adviser'=>'required',
             'abbreviation' => 'required'
         ]);
 
         $org = Organization::find($id);
+        $org->registration_number = $request->registration_number;
         $org->name = $request->name;
+        $org->organization_first_registered = Carbon::parse($request->organization_first_registered)->format('Y-m-d');
+        $org->adviser = $request->adviser;
         $org->description = $request->description;
         $org->abbreviation = $request->abbreviation;
         $org->save();

@@ -32,7 +32,7 @@
                         
                         <td class="hand" @click="filedocpage(list)">
                             <img class="img-icon" src="css/folder.png" alt="">&nbsp;<i>({{ list.description }})</i>
-                            <strong>{{ list.abbreviation}}</strong > 
+                            <strong>&nbsp;{{ list.abbreviation}}</strong > 
                         </td>
                         <td>
                             <div class="pull-right" >
@@ -43,7 +43,7 @@
                                     <button type="button" @click="navButton(1,list.id)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Add Organization">
                                         <span class="fa fa-plus"></span>
                                     </button>
-                                     <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Archive">
+                                     <button type="button" @click="archiveModal(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Archive">
                                         <span class="fa fa-archive"></span>
                                     </button>
                                 </div>
@@ -93,6 +93,30 @@
                         </div>
                     </div>
                 </div>
+
+                  <div class="modal fade archive-categ">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <!-- <div class="modal-header">
+                                <h4>ORGANIZATION CATEGORY</h4>
+                            </div> -->
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                       Do you want to move <strong>{{ post.description }}</strong> on archive?
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                 <div class="btn-group">
+                                    <button type="button"  @click="revomeCategory(post)"  class="btn btn-danger btn-sm">Yes</button>
+                                    <button type="button" data-dismiss="modal"  class="btn btn-default btn-sm">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
 </template>
 
@@ -131,6 +155,7 @@ export default {
                 length:10,
                 search:'',
                 column:0,
+                archive:0,
                 dir:'desc',
                 // activate:1
             },
@@ -220,6 +245,21 @@ export default {
                     this.btn_cap ='Save Changes'                         
                 });
             })
+        },
+        archiveModal(data){
+            this.post = data;
+            $('.archive-categ').modal('show');
+        },
+        revomeCategory(data){
+            this.$axios.get('sanctum/csrf-cookie').then(res=>{
+                this.$axios.delete('api/category/'+data.id).then(res=>{
+                    this.post = {};
+                    this.listOfCategory();
+                    $('.archive-categ').modal('hide');
+                }).catch(err=>{
+
+                });
+            });
         }
     },
 }

@@ -15,6 +15,8 @@ class FiledDoc extends Model
         'filename',
         'description',
         'date_filed',
+        'year',
+        'semester',
         'deleted',
         'status',
         'org_id',

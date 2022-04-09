@@ -69,6 +69,19 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <form>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label>Registration Number</label>
+                                                <input type="text" v-model="post.registration_number" class="form-control">
+                                                <span class="errors-material" v-if="errors.registration_number">{{errors.registration_number[0]}}</span>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>Organization First Registered</label>
+                                                <Datepicker v-model="post.organization_first_registered" :format="format"/>
+                                                <!-- <input type="date" v-model="post.organization_first_registered" class="form-control"> -->
+                                                <span class="errors-material" v-if="errors.organization_first_registered">{{errors.organization_first_registered[0]}}</span>
+                                            </div>
+                                        </div>
                                         <div class="form-group">
                                             <label>Name</label>
                                             <input type="text" v-model="post.name" class="form-control">
@@ -83,6 +96,11 @@
                                             <label>Abbreviation</label>
                                             <input type="text" v-model="post.abbreviation" class="form-control">
                                             <span class="errors-material" v-if="errors.abbreviation">{{errors.abbreviation[0]}}</span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Adviser</label>
+                                            <input type="text" v-model="post.adviser" class="form-control">
+                                            <span class="errors-material" v-if="errors.adviser">{{errors.adviser[0]}}</span>
                                         </div>
                                     </form>
                                 </div>
@@ -102,13 +120,32 @@
 </template>
 
 <script>
+import { ref,reactive } from 'vue';
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+
 import DataTable from '../../table/DataTable'
 import PaginationVue from '../../table/Pagination';
 
 export default {
     components:{
+        Datepicker,
         dataTable:DataTable,
         pagination:PaginationVue
+    },
+    setup() {
+        // In case of a range picker, you'll receive [Date, Date]
+        const format = (d) => {
+            const day =("0" + d.getDate()).slice(-2);
+            const month = ("0"+(d.getMonth()+1)).slice(-2);
+            const year =  d.getFullYear();
+
+            return  month+ "-" + day  + "-" + year;
+        }
+        
+        return {
+            format,
+        }
     },
     data(){
         let sortOrders = {};

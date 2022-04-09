@@ -12,13 +12,31 @@
                         </div>
                         <div class="form-group">
                             <label>Description (Optional)</label>
-                            <textarea v-model="post.description" class="form-control form-control-sm"></textarea>
-                            
+                            <textarea v-model="post.description" class="form-control form-control-sm"></textarea>             
+                        </div>
+                        <div class="form-group">
+                            <label>Year</label>
+                            <select v-model="post.year" class="form-control">
+                                <option value="0">Year:</option>
+                                <option v-for="(year, index) in years" :key="index" :value="year">{{ year }}</option>
+                            </select>
+                            <!-- <Datepicker v-model="post.year" :format="format" :flow="flow" /> -->
+                            <!-- <input type="text" v-model="post.year" class="form-control form-control-sm"> -->
+                            <span class="errors-material" v-if="errors.year">{{errors.year[0]}}</span>
+                        </div>
+                        <div class="form-group mb-5">
+                            <label>Semester</label>
+                            <select v-model="post.semester" class="form-control">
+                                <option value="1">First Semester</option>
+                                <option value="2">Second Semester</option>
+                                
+                            </select>
+                            <span class="errors-material" v-if="errors.semester">{{errors.semester[0]}}</span>
                         </div>
                         <!-- <div class="col-md-12"> -->
                         <span class="errors-material" v-if="errors.file">{{errors.file[0]}}</span>
-                        <div class="box" v-bind="getRootProps()" v-if="editme">
-                            <input v-bind="getInputProps()" >
+                        <div class="box" v-bind="getRootProps()" v-if="editme" >
+                            <input v-bind="getInputProps()" :acceptedFiles="['exe']">
                             <h5 v-if="isDragActive">Drop the files here ...</h5>
                             <h5 v-else>Drag and Drop some files here, or click to select files</h5>
                             
@@ -33,7 +51,7 @@
                         <div class="btn-group mt-4">
                             <button type="button" @click="saveFiles" class="btn btn-success">{{btn_cap}}</button>
                             <button type="button" @click="cancel" class="btn btn-default" v-if="editme">Cancel</button>
-                            <button type="button" @click="cancelEdit" v-else="editme" class="btn btn-default">Cancel</button>
+                            <button type="button" @click="cancelEdit" v-else-if="!editme" class="btn btn-default">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -62,7 +80,7 @@
                                         <!-- <button type="button" @click="navButton(1,list.id)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="View Files">
                                             <span class="fa fa-eye"></span>
                                         </button> -->
-                                        <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Upload Files">
+                                        <button type="button" @click="adduploadfile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Upload Files">
                                             <span class="fa fa-upload"></span>
                                         </button>
                                     </div>
@@ -84,21 +102,32 @@
                 </pagination>
             </div>
 
-             <div class="modal fade view-file">
+             <div class="modal fade view-file" ref="viewfilemodal">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <!-- <div class="modal-header">
                             <h4>ORGANIZATION</h4>
                         </div> -->
-                        <div class="modal-body">
+                        <div class="modal-body" v-if="showDownload">
+                            <div class="btn-group">
+                                <button type="button" @click="downloadFile(data_)" Class="btn btn-success"><span class="fa fa-download"> </span> Download</button>
+                                <button type="button" @click="closeimgFile" Class="btn btn-default"> Cancel</button>
+                            </div>
+                        </div>
+                        <div class="modal-body" v-if="viewfilemodal_ & !showDownload">
+                            <div class="card card-body">
+                                <img  class="img-responsive" :src="image_file"/>
+                                <button type="button" @click="closeimgFile" Class="btn btn-default">close</button>
+                            </div>
+                        </div>
+                        <div class="modal-body" v-if="!viewfilemodal_">
                             <h4>FILES</h4>
                             <div class="card card-body">
-                              <strong>Filename: {{ uploads.filename }} </strong>
-                              <i>Description: {{ uploads.description }}</i>
+                              <strong>Filename: {{ uploads.filename }} (<i> {{ uploads.description }}</i>)</strong>
+                             
                             </div>
                             <div class="row">
-                                <div class="col-md-12">
-                                                                    
+                                <div class="col-md-12">                       
                                     <div class="table-responsive">
                                         <table class="table table-striped table-sm">
                                             <thead>
@@ -134,15 +163,45 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <!-- <div class="btn-group">
+                        <!-- <div class="modal-footer">
+                            <div class="btn-group">
                                 <button type="button"  @click="updateOrg"  class="btn btn-success">{{ btn_cap }}</button>
                                 <button type="button" data-dismiss="modal"  class="btn btn-default">Cancel</button>
-                            </div> -->
-                        </div>
+                            </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
+
+            </div>
+        </div>
+
+        <div class="modal fade upload-file" ref="uploadme">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="box" v-bind="getRootProps()">
+                            <input v-bind="getInputProps()" >
+                            <h5 v-if="isDragActive">Drop the files here ...</h5>
+                            <h5 v-else>Drag and Drop some files here, or click to select files</h5>
+                            
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li  class="list-group-item" v-for="(lst, indx) in docs" :key="indx">
+                                <strong>{{ truncate(lst.path, 30,'...')}} </strong> &nbsp;
+                                <button type="button" @click="removeMe(indx)" class="btn btn-light btn-sm" >
+                                <span class="fa fa-times"></span></button>
+                            </li>
+                        </ul>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group">
+                            <button type="button"  @click="addFileUpload()"  class="btn btn-success">Save</button>
+                            <button type="button" data-dismiss="modal"  class="btn btn-default">Cancel</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -151,9 +210,11 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive,onMounted } from 'vue'
 import { useDropzone } from 'vue3-dropzone'
 import { useRoute } from "vue-router";
+// import Datepicker from '@vuepic/vue-datepicker';
+// import '@vuepic/vue-datepicker/dist/main.css';
 
 import DataTable from '../../table/DataTable'
 import PaginationVue from '../../table/Pagination';
@@ -161,17 +222,28 @@ import PaginationVue from '../../table/Pagination';
 export default {
 components:{
         dataTable:DataTable,
-        pagination:PaginationVue
+        pagination:PaginationVue,
+        // Datepicker
 },
  data(){
      return{
          sfile:[],
          docs:[],
-     
+         editme_:false,
+         post:{
+             year: new Date()
+         }
      }
  },
 props:{
 
+},
+computed : {
+    years () {
+        const year = new Date().getFullYear()
+        const date_ = 2000;
+        return Array.from({length: year - date_}, (value, index) => (date_+ 1) + index)
+    }
 },
  setup() {
         const route = useRoute();
@@ -182,7 +254,15 @@ props:{
         let upls = [];
         let filedata = ref(null);
         const editme = ref(true);
+        const not_found = ref(true);
         const uploads = ref({}); 
+        const data_ = ref({}); 
+        const uploadme = ref(null);
+        const viewfilemodal = ref(null);
+        const viewfilemodal_ = ref(false);
+        const showDownload = ref(false);
+        const image_file = ref();
+
         function onDrop(acceptFiles, rejectReasons) {  
             if(upls.length  > 0){
                 for (var x = 0; x < acceptFiles.length; x++) {
@@ -214,7 +294,11 @@ props:{
                     const formData = new FormData(); // pass data as a form
                     let _name = post.filename == undefined ? "" : post.filename;
                     let _file_description = post.description == undefined ? "" : post.description;
+                    let _year = post.year == undefined ? "" : post.year;
+                    let _semester = post.semester == undefined ? "" : post.semester;
                    
+                    formData.append('year',_year);
+                    formData.append('semester',_semester);
                     formData.append('filename',_name);
                     formData.append('description',_file_description);
                     formData.append('org_id',org_id);
@@ -244,7 +328,9 @@ props:{
                             Object.assign(post, {
                                 id:0,
                                 filename:"",
-                                description:""
+                                description:"",
+                                year:"",
+                                semester:""
                             });
                             listFile();listFile();
                             btn_cap.value ='Save'
@@ -342,7 +428,9 @@ props:{
              Object.assign(post, {
                 id:data.id,
                 filename:data.filename,
-                description:data.description
+                description:data.description,
+                year:data.year,
+                semester:data.semester
              });
         }
 
@@ -353,19 +441,19 @@ props:{
              Object.assign(post, {
                 id:0,
                 filename:"",
-                description:""
+                description:"",
+                year:"",
+                semester:""
              });
         }
 
         const viewInfo = (data)=>{
-            console.log(data);
             uploads.value = data;
             $('.view-file').modal('show');
 
         }
 
         const downloadFile = (data)=>{
-            console.log(data);
              axios.get('sanctum/csrf-cookie').then(response => {
                 axios.get('api/download-file/'+data.id,{responseType: 'blob',}).then(res=>{
     
@@ -385,25 +473,114 @@ props:{
         const viewFile = (data) =>{
              axios.get('sanctum/csrf-cookie').then(response => {
                 axios.get('api/download-file/'+data.id,{responseType: 'blob',}).then(res=>{
-                    //   window.open(res.data)
+            
+                    let str = res.data.type;
+                    var image = new Image();
+                    var reader = new FileReader();
+                    var filter = str.substring(0, str.lastIndexOf("/"));
+                    var xtn = str.substring(str.lastIndexOf("/")+1, str.length);
+                    if(filter == 'application' && xtn == 'pdf'){
+                        let blob = new Blob([res.data], {type: 'application/pdf'})
+                        var url = window.URL.createObjectURL(blob)
+                        window.open(url);
+                     
+                    }else if(filter == 'image'){
+                      
+                        reader.readAsDataURL(res.data); 
+                        reader.onloadend = function() {
+                            var base64data = reader.result;                    
+                            image.src = base64data;
+                            image_file.value = base64data;
+                            viewfilemodal_.value = true;
+                            // var w = window.open("");
+                            // w.document.write(image.outerHTML);
 
-                    // let blob = new Blob([res.data])
-                    // let link = document.createElement('a')
-                    // link.href = window.URL.createObjectURL(blob)
-                    // link.setAttribute('download', data.original_name+'.'+data.extension);
-                    // // link.download = data.original_name+'.'+data.extension;
-                    // document.body.appendChild(link);
-                    // link.click()
-                    //  URL.revokeObjectURL(link.href)
+                        }
+                        return;
+                    }else{
+                        data_.value = data;
+                        showDownload.value = true;
+                    }     
                 })
                 
             });
-            // window.document.body.appendChild(this.$el)
+           
         }
 
-        const { getRootProps, getInputProps, ...rest } = useDropzone({ onDrop, onDropAccepted });
+        const adduploadfile = (data)=>{
+            Object.assign(post, {
+                file_id:data.id,
+             });
+            editme.value = false;
+            $(uploadme.value).modal({
+                backdrop: 'static',
+                keyboard: false
+            })
+        }
+    
+
+        onMounted(() => {
+            $(uploadme.value).on("hidden.bs.modal", () => {
+                editme.value = true;
+                docs.value = {};
+                upls = [];
+            })
+
+            $(uploadme.value).on('shown.bs.modal', () =>{
+                editme.value = false;
+                docs.value = {};
+                upls = [];
+            })
+
+            $(viewfilemodal.value).on('hidden.bs.modal', () =>{
+                image_file.value ="";
+                viewfilemodal_.value = false;
+                showDownload.value = false;
+            })
+        });
+        const addFileUpload = ()=>{
+                const formData = new FormData(); // pass data as a form
+                formData.append('file_id',post.file_id);
+                for (var x = 0; x < upls.length; x++) {
+                    formData.append("file[]", upls[x]);
+                }
+                axios.get('sanctum/csrf-cookie').then(res=>{
+                    axios.post('api/uploads',formData,{
+                        headers: {
+                            "Content-Type": "multipart/form-data",}
+                    }).then(res=>{
+                          $(uploadme.value).modal('hide');
+                          listFile();
+                    }).catch(err=>{
+                         if(err){
+                             errors.value = err.response.data.errors
+                         }
+                    });
+                });
+        }
+
+        const closeimgFile = ()=>{
+            image_file.value ="";
+            viewfilemodal_.value = false;
+            showDownload.value = false;
+        }
+        // const format = (d) => {
+        //     const year =  d.getFullYear();
+        //     return ''+year;
+        // }
+        // const flow = ref(['year']);
+
+        const options = reactive({
+        onDropAccepted,
+        multiple: true,
+        onDrop,
+        accept: '.jpg,.pdf,.doc,.docx,.xlsx,.xls,.png,.jpeg,.ppt,.ppsm,.ppsx,.pptm,.pptx',
+        })
+        
+        const { getRootProps, getInputProps, ...rest } = useDropzone(options);
       
         return {
+            addFileUpload,
             docs,
             getRootProps,
             getInputProps,
@@ -428,16 +605,29 @@ props:{
              viewInfo,
              uploads,
              downloadFile,
-             viewFile
+             viewFile,
+             not_found,
+             adduploadfile,
+             uploadme,
+             image_file,
+             viewfilemodal,
+             viewfilemodal_,
+             closeimgFile,
+             data_,
+             showDownload
+            // format,
+            // flow,
         }
     },
     methods:{
         truncate(text, length, suffix) {
-            if (text.length > length) {
-                return text.substring(0, length) + suffix;
-            } else {
-                return text;
-            } 
+           if(text != null){
+                if (text.length > length) {
+                    return text.substring(0, length) + suffix;
+                } else {
+                    return text;
+                } 
+           }
         },
         cancel(){
             let id = this.$route.params.org_id;
@@ -448,7 +638,7 @@ props:{
         // this.docs = JSON.parse(localStorage.getItem('files'));
     },
     mounted(){
-       
+      
     }
 
 

@@ -20,8 +20,9 @@ class CategoryController extends Controller
         $length = $request->length;
         $column = $request->column;
         $dir = $request->dir;
+        $archive = $request->archive;
         $searchValue = $request->search;
-        $query = Category::where('deleted',0)->orderBy($columns[$column], $dir);
+        $query = Category::where('deleted',$archive)->orderBy($columns[$column], $dir);
     
         if($searchValue){
             $query->where(function($query) use ($searchValue){
@@ -113,6 +114,16 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+       $categ = Category::find($id);
+       $categ->deleted = 1;
+       $categ->save();
+       return response()->json([], 200);
+    }
+
+    public function restore($id){
+        $categ = Category::find($id);
+        $categ->deleted = 0;
+        $categ->save();
+        return response()->json([], 200);
     }
 }
