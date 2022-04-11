@@ -1,5 +1,6 @@
 <template>
     <div class="card-body card-height">
+        <div class="blockquote">{{ category.description }} > {{ organization.name }} </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="card">  
@@ -58,6 +59,14 @@
             </div>
             <div class="col-md-6">
                 <h4><span class="fa fa-list"></span> List of files</h4>
+                <ul class="list-inline">
+                    <li class="list-inline-item">
+                        <input type="text" class="form-control" v-model="tableData.search" @input="listFile()" placeholder="Search...">
+                    </li>
+                    <li class="list-inline-item">
+
+                    </li>
+                </ul>
                 <data-table :sortKey="sortKey" >
                     <tbody>
                         <tr v-for = "(list, index) in filedata" :key="index" class="linkTable"  >
@@ -70,6 +79,12 @@
                                 </span>
                                 &nbsp;<strong>{{ list.filename }}</strong>
                                 &nbsp;<i>{{ truncate(list.description, 30,'...')}}</i > 
+                            </td>
+                            <td>
+                            <ul class="list-inline">
+                                <li class="list-inline-item">{{ loadSemester(list.semester) }}</li>
+                                <li class="list-inline-item"> <strong>{{ list.year }}</strong></li>
+                            </ul>
                             </td>
                             <td>
                                 <div class="pull-right" >
@@ -96,8 +111,8 @@
                 </data-table>
                 <div class="col-md-12">
                 <pagination :pagination="pagination"
-                    @prev="listOfCategory(pagination.prevPageUrl)"
-                    @next="listOfCategory(pagination.nextPageUrl)"
+                    @prev="listFile(pagination.prevPageUrl)"
+                    @next="listFile(pagination.nextPageUrl)"
                     v-show="noData(filedata)">
                 </pagination>
             </div>
@@ -108,24 +123,28 @@
                         <!-- <div class="modal-header">
                             <h4>ORGANIZATION</h4>
                         </div> -->
-                        <div class="modal-body" v-if="showDownload">
-                            <div class="btn-group">
-                                <button type="button" @click="downloadFile(data_)" Class="btn btn-success"><span class="fa fa-download"> </span> Download</button>
-                                <button type="button" @click="closeimgFile" Class="btn btn-default"> Cancel</button>
-                            </div>
+                        <div class="modal-body" >
+                            
                         </div>
-                        <div class="modal-body" v-if="viewfilemodal_ & !showDownload">
+                        <div class="modal-body" v-if="viewfilemodal_">
                             <div class="card card-body">
-                                <img  class="img-responsive" :src="image_file"/>
-                                <button type="button" @click="closeimgFile" Class="btn btn-default">close</button>
+                                <div class="btn-group" v-if="showDownload">
+                                    <button type="button" @click="downloadFile(data_)" Class="btn btn-success"><span class="fa fa-download"> </span> Download</button>
+                                    <button type="button" @click="closeimgFile" Class="btn btn-default"> Cancel</button>
+                                </div>  
+                                <img  class="img-responsive" :src="image_file" v-if="!showDownload"/>
+                                <button type="button" @click="closeimgFile" v-if="!showDownload" Class="btn btn-default">close</button>
                             </div>
                         </div>
                         <div class="modal-body" v-if="!viewfilemodal_">
                             <h4>FILES</h4>
-                            <div class="card card-body">
-                              <strong>Filename: {{ uploads.filename }} (<i> {{ uploads.description }}</i>)</strong>
-                             
-                            </div>
+                            <!-- <div class="card card-body"> -->
+                              <ul class="list-inline">
+                                <li class="list-inline-item"><strong>{{ uploads.filename }}</strong></li>
+                                <li class="list-inline-item">({{ uploads.description }})</li>
+                                <li class="list-inline-item"> {{ loadSemester(uploads.semester) }} - {{uploads.year}}</li>
+                              </ul>
+                            <!-- </div> -->
                             <div class="row">
                                 <div class="col-md-12">                       
                                     <div class="table-responsive">
@@ -225,16 +244,18 @@ components:{
         pagination:PaginationVue,
         // Datepicker
 },
- data(){
-     return{
-         sfile:[],
-         docs:[],
-         editme_:false,
-         post:{
-             year: new Date()
-         }
-     }
- },
+data(){
+    return{
+        sfile:[],
+        docs:[],
+        category:{},
+        organization:{},
+        editme_:false,
+        post:{
+            year: new Date()
+        }
+    }
+},
 props:{
 
 },
@@ -264,6 +285,8 @@ computed : {
         const image_file = ref();
 
         function onDrop(acceptFiles, rejectReasons) {  
+            console.log(acceptFiles);
+            
             if(upls.length  > 0){
                 for (var x = 0; x < acceptFiles.length; x++) {
                 let fil = upls.filter((a)=>a.name == acceptFiles[x].name);
@@ -479,11 +502,11 @@ computed : {
                     var reader = new FileReader();
                     var filter = str.substring(0, str.lastIndexOf("/"));
                     var xtn = str.substring(str.lastIndexOf("/")+1, str.length);
-                    if(filter == 'application' && xtn == 'pdf'){
+                    if(xtn == 'pdf'){
                         let blob = new Blob([res.data], {type: 'application/pdf'})
                         var url = window.URL.createObjectURL(blob)
                         window.open(url);
-                     
+                     return
                     }else if(filter == 'image'){
                       
                         reader.readAsDataURL(res.data); 
@@ -492,6 +515,7 @@ computed : {
                             image.src = base64data;
                             image_file.value = base64data;
                             viewfilemodal_.value = true;
+                            showDownload.value = false;
                             // var w = window.open("");
                             // w.document.write(image.outerHTML);
 
@@ -499,8 +523,9 @@ computed : {
                         return;
                     }else{
                         data_.value = data;
+                        viewfilemodal_.value = true;
                         showDownload.value = true;
-                    }     
+                    }
                 })
                 
             });
@@ -614,11 +639,13 @@ computed : {
              viewfilemodal_,
              closeimgFile,
              data_,
-             showDownload
+             showDownload,
+             tableData
             // format,
             // flow,
         }
     },
+   
     methods:{
         truncate(text, length, suffix) {
            if(text != null){
@@ -632,9 +659,35 @@ computed : {
         cancel(){
             let id = this.$route.params.org_id;
             this.$router.push({name:'orgs', params:{'id':id}});
+        },
+        loadCategory(){  
+            let id = this.$route.params.org_id;
+           this.$axios.get('sanctum/csrf-cookie').then(response => {
+                this.$axios.get('api/category/'+id).then(res=>{
+                    this.category = res.data;
+                });
+            }) 
+        },
+        loadOrganization(){  
+                let id = this.$route.params.id;
+                this.$axios.get('sanctum/csrf-cookie').then(response => {
+                    this.$axios.get('api/org/individual/'+id).then(res=>{
+                        this.organization = res.data;
+                    });
+                }) 
+            },
+        loadSemester(data){
+            if(data == 1){
+                return "First Semester";
+            }else{
+                return "Second Semester";
+
+            }
         }
-    },
+        },
     created(){
+        this.loadCategory();
+        this.loadOrganization();
         // this.docs = JSON.parse(localStorage.getItem('files'));
     },
     mounted(){

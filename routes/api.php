@@ -36,6 +36,7 @@ Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanct
 // });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/org/individual/{id}', [OrganizationController::class,'getIndOrg']);
     Route::resource('/org', OrganizationController::class);
     Route::get('/category/restore/{id}', [CategoryController::class,'restore']);
     Route::resource('/category', CategoryController::class);

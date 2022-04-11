@@ -145,4 +145,10 @@ class OrganizationController extends Controller
     {
         //
     }
+
+    public function getIndOrg($id){
+       $org =  Organization::find($id);
+
+       return response()->json($org, 200);
+    }
 }

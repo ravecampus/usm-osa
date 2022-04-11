@@ -23,11 +23,23 @@
                             <tbody>
                                 <tr v-for= "(list, index) in organizations" :key="index" class="linkTable" >
                                     
-                                    <td @click="fileUpload(list)" class="hand" data-toggle="tooltip" data-placement="top" title="Add files"><span class="fa fa-angle-up">
-                                        </span> <strong>{{ list.name }} </strong>
-                                        <i>&nbsp; {{ list.abbreviation }}</i>
+                                    <td @click="fileUpload(list)" class="hand" data-toggle="tooltip" data-placement="top" title="Add files">
+                                         <ul class="list-inline">
+                                            <li class="list-inline-item"><span class="fa fa-angle-up"></span>
+                                            <strong>&nbsp; {{ list.registration_number }} </strong></li>
+                                            <li class="list-inline-item">{{ list.name }}</li>
+                                            <li class="list-inline-item">({{ list.abbreviation }})</li>
+                                        </ul>
+                                        
                                     </td>
-                                    <td>{{ truncate(list.description, 30, '...') }}</td>
+                                    <td>
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">{{truncate(list.description, 30, '...')}}</li>
+                                            <li class="list-inline-item">{{ list.organization_first_registered }}</li>
+                                            <li class="list-inline-item"> <strong>{{ list.adviser }}</strong></li>
+                                        </ul>
+                                        
+                                    </td>
                                     <td><div class="pull-right">
                                             <div class="btn-group">
                                                 <!-- <button type="button" class="btn btn-default btn-sm" ><span class="fa fa-upload"></span></button> -->
