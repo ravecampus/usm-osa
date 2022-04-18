@@ -85,8 +85,9 @@ class OrganizationController extends Controller
         $length = $request->length;
         $column = $request->column;
         $dir = $request->dir;
+        $archive = $request->archive;
         $searchValue = $request->search;
-        $query = Organization::where('category_id',$id)->orderBy($columns[$column], $dir);
+        $query = Organization::where('deleted', $archive)->where('category_id',$id)->orderBy($columns[$column], $dir);
     
         if($searchValue){
             $query->where(function($query) use ($searchValue){
@@ -143,12 +144,22 @@ class OrganizationController extends Controller
      */
     public function destroy($id)
     {
-        //
+       $org = Organization::find($id);
+       $org->deleted = 1;
+       $org->save();
+       return response()->json([], 200);
     }
 
     public function getIndOrg($id){
        $org =  Organization::find($id);
 
        return response()->json($org, 200);
+    }
+
+    public function restore($id){
+        $categ = Organization::find($id);
+        $categ->deleted = 0;
+        $categ->save();
+        return response()->json([], 200);
     }
 }

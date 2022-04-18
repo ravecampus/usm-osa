@@ -7,8 +7,11 @@ import Login from '../pages/Login';
 import Category from '../pages/home/Category';
 import Form from '../pages/home/Form';
 import Organizations from '../pages/home/Organizations';
+import ArchOrg from '../pages/home/ArchOrg';
+import Profile from '../pages/home/Profile';
 import Files from '../pages/home/File';
 import Archive from '../pages/home/Archive';
+import Users from '../pages/home/Users';
 
 
 export const routes = [
@@ -37,6 +40,13 @@ export const routes = [
 
             },
             {
+                name:'arcorg',
+                path:'/orgs/:id/archive',
+                component: ArchOrg,
+                params:true,
+
+            },
+            {
                 name:'files',
                 path:'/files/:id/org/:org_id',
                 component: Files,
@@ -50,6 +60,16 @@ export const routes = [
 
             },
         ]
+    },
+    {
+        name: 'profile',
+        path: '/profile/:id',
+        component: Profile
+    },
+    {
+        name: 'users',
+        path: '/users/',
+        component: Users
     },
     {
         name: 'register',

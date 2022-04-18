@@ -2,13 +2,27 @@
       <div class="card-body card-height">
           <div class="row">
               <div class="col-md-12">
+                <h4>Organizations Archive List</h4>
                 <data-table :columns="columns" :sortKey="sortKey" :sortOrders="sortOrders" @sort="sortBy">
                     <tbody>
-                        <tr v-for = "(list, index) in categories" :key="index" class="text-secondary">
+                        <tr v-for = "(list, index) in organizations" :key="index" class="text-secondary">
                             
-                            <td class="hand" @click="filedocpage(list)">
-                                <img class="img-icon" src="/../css/archive.png" alt="">&nbsp;<i>({{ list.description }})</i>&nbsp;
-                                <strong> {{ list.abbreviation}}</strong > 
+                             <td @click="fileUpload(list)" class="hand" data-toggle="tooltip" data-placement="top" title="Add files">
+                                    <ul class="list-inline">
+                                    <li class="list-inline-item"><span class="fa fa-angle-up"></span>
+                                    <strong>&nbsp; {{ list.registration_number }} </strong></li>
+                                    <li class="list-inline-item">{{ list.name }}</li>
+                                    <li class="list-inline-item">({{ list.abbreviation }})</li>
+                                </ul>
+                                
+                            </td>
+                            <td>
+                                <ul class="list-inline">
+                                    <li class="list-inline-item">{{truncate(list.description, 30, '...')}}</li>
+                                    <li class="list-inline-item">{{ list.organization_first_registered }}</li>
+                                    <li class="list-inline-item"> <strong>{{ list.adviser }}</strong></li>
+                                </ul>
+                                
                             </td>
                             <td>
                                 <div class="pull-right" >
@@ -21,7 +35,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2" v-show="!noData(categories)">
+                            <td colspan="2" v-show="!noData(organizations)">
                                 No Result Found!
                             </td>
                         </tr>
@@ -30,7 +44,7 @@
               </div>
           </div>
 
-         <div class="modal fade restore-categ">
+         <div class="modal fade restore-org">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
                     <!-- <div class="modal-header">
@@ -71,6 +85,7 @@ export default {
         let columns =[
             {label:'Sort', name:'description'},
             {label:'', name:null},
+            {label:'', name:null},
             ];
         
         columns.forEach(column=>{
@@ -78,7 +93,7 @@ export default {
         });
         return{
             post:{},
-            categories:[],
+            organizations:[],
             columns:columns,
             sortOrders:sortOrders,
             sortKey:'created_at',
@@ -105,13 +120,14 @@ export default {
         }
     },
     methods:{
-        async  listOfCategory(url='api/category'){
+        async  listOfOrganization(url='api/org/'){
+            let id = this.$route.params.id;
            await this.$axios.get('sanctum/csrf-cookie').then(response => {
                 this.tableData.draw ++;  
-                this.$axios.get(url,{params:this.tableData}).then(res=>{
+                this.$axios.get(url+id,{params:this.tableData}).then(res=>{
                 let data = res.data;
                     if(this.tableData.draw == data.draw){
-                        this.categories = data.data.data;
+                        this.organizations = data.data.data;
                         this.configPagination(data.data);
                     }else{
                         this.not_found = true;
@@ -136,7 +152,7 @@ export default {
                 this.sortOrders[key] = this.sortOrders[key] * -1;
                 this.tableData.column = this.getIndex(this.columns, 'name', key);
                 this.tableData.dir = this.sortOrders[key] === 1 ? 'asc' : 'desc';
-                this.listOfCategory();
+                this.listOfOrganization();
             }
             
         },
@@ -162,23 +178,32 @@ export default {
         // },
         restoreModal(data){
             this.post = data;
-            $('.restore-categ').modal('show');
+            $('.restore-org').modal('show');
         },
         restoreCategory(data){
             this.$axios.get('sanctum/csrf-cookie').then(res=>{
-                this.$axios.get('api/category/restore/'+data.id).then(res=>{
+                this.$axios.get('api/org/restore/'+data.id).then(res=>{
                     this.post = {};
-                    this.listOfCategory();
-                    $('.restore-categ').modal('hide');
+                    this.listOfOrganization();
+                    $('.restore-org').modal('hide');
                 }).catch(err=>{
 
                 });
             });
-        }
+        },
+        truncate(text, length, suffix) {
+            if(text != null ){
+                if (text.length > length) {
+                    return text.substring(0, length) + suffix;
+                } else {
+                    return text;
+                } 
+            }
+        },
 
     },
     mounted(){
-        this.listOfCategory();
+        this.listOfOrganization();
     }
 }
 </script>

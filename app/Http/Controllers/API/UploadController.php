@@ -109,7 +109,11 @@ class UploadController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $ups = Upload::find($id);
+        $path = storage_path('app/public/files/').$ups->link;
+        unlink($path);
+        $ups->delete();
+        return response()->json($ups, 200);
     }
 
     public function downloadFile($id){

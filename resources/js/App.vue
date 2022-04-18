@@ -81,6 +81,10 @@
                                         </router-link>
                                        
                                     </li>
+                                    <li class="nav-item"  v-if="secure">
+                                        <router-link :to="{name:'users'}" class="nav-link"><i class="fa fa-user-plus"></i> USERS</router-link>
+
+                                    </li>
                                     <!-- <li class="nav-item"  v-if="secure">
                                         <router-link class="nav-link" href="#" :to="{name:'department'}" role="button" >
                                             <i class="fa fa-plus-circle"></i> 
@@ -94,8 +98,16 @@
                                             <span> SETTINGS</span>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDrop1">
-                                            <a class="dropdown-item"><i class="fa fa-user-plus"></i> Users</a>
-                                            <a class="dropdown-item"><i class="fa fa-user-circle-o"></i> Profile</a>
+                                            <div class="card-nav">
+                                                <div class="top-container"> <img v-bind:src="avatar()" class="img-fluid profile-image" width="70">
+                                                    <div class="ml-3">
+                                                        <h5 class="name">{{ post.fname }}&nbsp; {{post.lname}}</h5>
+                                                        <p class="mail">{{ post.email }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                           
+                                            <router-link :to="{name:'profile', params:{id:user_id}}" class="dropdown-item"><i class="fa fa-user-circle-o"></i> Profile</router-link>
                                             <a class="dropdown-item"  href="#" v-on:click="logout">
                                                 <i class="fa fa-sign-out"></i>
                                                 Logout
@@ -129,6 +141,8 @@
                 status:'',
                 title:'',
                 secure:false,
+                user_id:0,
+                post:{},
                 inventory:[
                      {caption:'Products', link:'products', icon:'fa-th-large'},
                      {caption:'New Stock / Stock In', link:'newstock', icon:'fa-th-large'},
@@ -230,6 +244,16 @@
             },
             shortCut(e){
                 // console.log(e.key);
+            },
+            avatar(){
+                
+                if(this.post.gender == 'male'){
+                    return "/css/male.png";
+                }else if(this.post.gender == 'female'){
+                    return "/css/female.png";
+                }
+                return "/css/male.png"
+            
             }
 
         },
@@ -238,6 +262,8 @@
             if(window.Laravel.isLoggedin){
                 this.getAuthUser();
                 window.isAuth = true;
+                this.post = window.Laravel.user;
+                this.user_id = window.Laravel.user.id;
                 this.secure = true;
             }
        
@@ -245,3 +271,38 @@
     }
 </script>
 
+<style>
+.card-nav {
+    background-color: #fff;
+    width: 280px;
+    border-radius: 2px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 1rem !important
+}
+
+.top-container {
+    display: flex;
+    align-items: center
+}
+
+.profile-image {
+    border-radius: 10px;
+    border: 2px solid #1e8856
+}
+
+.name {
+    font-size: 15px;
+    font-weight: bold;
+    color: #272727;
+    position: relative;
+    top: 8px
+}
+
+.mail {
+    font-size: 14px;
+    color: grey;
+    position: relative;
+    top: 2px
+}
+
+</style>

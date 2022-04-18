@@ -1,9 +1,9 @@
 <template>
     <div class="card-body card-height">
-            <div class="col-md-12 mt-2 card card-header">
+            <div class="col-md-12 mt-2">
                 <h4>ORGANIZATION CATEGORIES</h4>
                 <div class="row search-head">
-                    <div class="col-md-8 mb-2">
+                    <div class="col-md-8">
                         <input type="text" class="form-control" v-model="tableData.search"  placeholder="Search ..." @input="listOfCategory()">
                     </div>
                     <div class="col-md-4">
@@ -94,7 +94,7 @@
                     </div>
                 </div>
 
-                  <div class="modal fade archive-categ">
+                <div class="modal fade archive-categ">
                     <div class="modal-dialog modal-sm">
                         <div class="modal-content">
                             <!-- <div class="modal-header">

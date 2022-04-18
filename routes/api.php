@@ -7,6 +7,7 @@ use App\Http\Controllers\API\OrganizationController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\FiledDocController;
 use App\Http\Controllers\API\UploadController;
+use App\Http\Controllers\API\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,20 +24,21 @@ Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
 Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
 
-// Route::group(['middleware' => 'auth:sanctum'], function () {
-//     Route::get('/', [BookController::class, 'index']);
-//     Route::post('add', [BookController::class, 'add']);
-//     Route::get('edit/{id}', [BookController::class, 'edit']);
-//     Route::post('update/{id}', [BookController::class, 'update']);
-//     Route::delete('delete/{id}', [BookController::class, 'delete']);
-// });
-
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
 
 Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::put('/profile/pass/{id}', [ProfileController::class, 'userPassword']);
+    Route::get('/profile/list/', [ProfileController::class, 'getUsers']);
+    Route::put('/profile/users/{id}', [ProfileController::class, 'editUsers']);
+    Route::post('/profile/users', [ProfileController::class, 'users']);
+    Route::post('/profile/newpass', [ProfileController::class, 'newPassword']);
+    Route::post('/profile/check', [ProfileController::class, 'changePassword']);
+    Route::resource('/profile', ProfileController::class);
     Route::get('/org/individual/{id}', [OrganizationController::class,'getIndOrg']);
+    Route::get('/org/restore/{id}', [OrganizationController::class,'restore']);
     Route::resource('/org', OrganizationController::class);
     Route::get('/category/restore/{id}', [CategoryController::class,'restore']);
     Route::resource('/category', CategoryController::class);

@@ -55,18 +55,20 @@ class FiledDocController extends Controller
             return response()->json(['errors'=>['filename' => ['The filename has already been taken.']]], 422);
         }
         $user_id = Auth::id();
-        $fileD = FiledDoc::create([
-            'filename'=>$request->filename,
-            'description'=>$request->description,
-            'year'=>$request->year,
-            'semester'=>$request->semester,
-            'date_filed' => Carbon::today(),
-            'user_id' =>$user_id,
-            'org_id'=>$request->org_id
-
-        ]);
+     
         // Str::random(8);
         if($request->hasFile('file')){
+            $fileD = FiledDoc::create([
+                'filename'=>$request->filename,
+                'description'=>$request->description,
+                'year'=>$request->year,
+                'semester'=>$request->semester,
+                'date_filed' => Carbon::today(),
+                'user_id' =>$user_id,
+                'org_id'=>$request->org_id
+    
+            ]);
+
             $files = $request->file('file');
             foreach ($files as $file) {
 

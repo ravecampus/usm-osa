@@ -15,10 +15,11 @@
                    
                     <div class="card-body card-height">
                         <h4>ORGANIZATIONS <i v-if="category != {}">({{ category.description }})</i></h4>
-                        <div class="card card-header mb-4">
+                        <div class="mb-4">
                             <input type="text" class="form-control" v-model="tableData.search"  placeholder="Search ..." @input="loadOrganization()">
                         </div>
                         <button type="button" class="btn btn-default mb-2" @click="addOrg()"><span class="fa fa-plus-circle"></span> Organization</button>
+                        <button type="button" class="btn btn-default mb-2" @click="archiveOrg()"><span class="fa fa-archive"></span> Archive</button>
                         <data-table>
                             <tbody>
                                 <tr v-for= "(list, index) in organizations" :key="index" class="linkTable" >
@@ -44,7 +45,7 @@
                                             <div class="btn-group">
                                                 <!-- <button type="button" class="btn btn-default btn-sm" ><span class="fa fa-upload"></span></button> -->
                                                 <button type="button" class="btn btn-default btn-sm" @click="UpdateModal(list)" ><span class="fa fa-edit"></span></button>
-                                                <button type="button" class="btn btn-default btn-sm" ><span class="fa fa-archive"></span></button>
+                                                <button type="button" class="btn btn-default btn-sm" @click="archiveModal(list)" ><span class="fa fa-archive"></span></button>
                                             </div>
                                         </div>
                                     </td>
@@ -128,6 +129,30 @@
                 </div>
             </div>
 
+            <div class="modal fade archive-org">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <!-- <div class="modal-header">
+                            <h4>ORGANIZATION CATEGORY</h4>
+                        </div> -->
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    Do you want to move <strong>{{ post.name }}</strong> on archive?
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                                <div class="btn-group">
+                                <button type="button"  @click="revomeOrganization(post)"  class="btn btn-danger btn-sm">Yes</button>
+                                <button type="button" data-dismiss="modal"  class="btn btn-default btn-sm">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
     </div>
 </template>
 
@@ -185,7 +210,7 @@ export default {
                 search:'',
                 column:0,
                 dir:'desc',
-                // activate:1
+                archive:0
             },
             pagination:{
                 lastPage:'',
@@ -269,6 +294,9 @@ export default {
         addOrg(){
             this.$router.push({name:'fillupform', params:{'id':this.id}});
         },
+        archiveOrg(){
+                this.$router.push({name:'arcorg', params:{'id':this.id}});
+        },
         fileUpload(list){
             this.$router.push({name:'files',
              params:{'id':list.id, 'org_id':this.id}
@@ -291,6 +319,21 @@ export default {
                     this.btn_cap ='Save Changes'
                 });
             })
+        },
+        archiveModal(data){
+            this.post = data;
+            $('.archive-org').modal('show');
+        },
+        revomeOrganization(data){
+            this.$axios.get('sanctum/csrf-cookie').then(res=>{
+                this.$axios.delete('api/org/'+data.id).then(res=>{
+                    this.post = {};
+                    this.loadOrganization();
+                    $('.archive-org').modal('hide');
+                }).catch(err=>{
+
+                });
+            });
         }
 
 

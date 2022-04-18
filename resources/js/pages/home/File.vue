@@ -141,7 +141,7 @@
                             <!-- <div class="card card-body"> -->
                               <ul class="list-inline">
                                 <li class="list-inline-item"><strong>{{ uploads.filename }}</strong></li>
-                                <li class="list-inline-item">({{ uploads.description }})</li>
+                                <li class="list-inline-item">{{ uploads.description }}</li>
                                 <li class="list-inline-item"> {{ loadSemester(uploads.semester) }} - {{uploads.year}}</li>
                               </ul>
                             <!-- </div> -->
@@ -157,7 +157,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for ="(list,x) in uploads.files" :key="x">
+                                                <tr v-for ="(list,x) in uploads_files" :key="x">
                                                     <td>{{list.original_name}}</td>
                                                     <td>{{list.extension}}</td>
                                                     <td>
@@ -168,7 +168,7 @@
                                                             <button type="button" @click="downloadFile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Download">
                                                                 <span class="fa fa-download"></span>
                                                             </button>
-                                                            <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Delete">
+                                                            <button type="button" @click="showDeleteFile(list, x)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Delete">
                                                                 <span class="fa fa-trash"></span>
                                                             </button>
                                                         </div>
@@ -199,6 +199,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
+                        <span class="errors-material" v-if="errors.file">{{errors.file[0]}}</span>
                         <div class="box" v-bind="getRootProps()">
                             <input v-bind="getInputProps()" >
                             <h5 v-if="isDragActive">Drop the files here ...</h5>
@@ -216,8 +217,32 @@
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group">
-                            <button type="button"  @click="addFileUpload()"  class="btn btn-success">Save</button>
+                            <button type="button"  @click="addFileUpload()"  class="btn btn-success">{{ btn_cap_ }}</button>
                             <button type="button" data-dismiss="modal"  class="btn btn-default">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal delete-file" ref="deletefile">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <!-- <div class="modal-header">
+                        <h4>ORGANIZATION CATEGORY</h4>
+                    </div> -->
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                Do you want to remove <strong>{{ d_file.original_name }}</strong> permanently?
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                            <div class="btn-group">
+                            <button type="button"  @click="deletePFile(d_file)"  class="btn btn-danger btn-sm">Yes</button>
+                            <button type="button" data-dismiss="modal"  class="btn btn-default btn-sm">No</button>
                         </div>
                     </div>
                 </div>
@@ -272,13 +297,17 @@ computed : {
         const post = reactive({});
         const errors = ref([]);
         const btn_cap = ref("Save");
+        const btn_cap_ = ref("Save");
         let upls = [];
         let filedata = ref(null);
         const editme = ref(true);
         const not_found = ref(true);
         const uploads = ref({}); 
+        let uploads_files = ref(null);
         const data_ = ref({}); 
+        const d_file = ref({}); 
         const uploadme = ref(null);
+        const deletefile = ref(null);
         const viewfilemodal = ref(null);
         const viewfilemodal_ = ref(false);
         const showDownload = ref(false);
@@ -355,7 +384,7 @@ computed : {
                                 year:"",
                                 semester:""
                             });
-                            listFile();listFile();
+                            listFile();
                             btn_cap.value ='Save'
                             // filedata.value.unshift(res.data)
                         }).catch((err) => {
@@ -472,6 +501,7 @@ computed : {
 
         const viewInfo = (data)=>{
             uploads.value = data;
+            uploads_files.value = data.files
             $('.view-file').modal('show');
 
         }
@@ -549,6 +579,7 @@ computed : {
                 editme.value = true;
                 docs.value = {};
                 upls = [];
+                errors.value = [];
             })
 
             $(uploadme.value).on('shown.bs.modal', () =>{
@@ -561,6 +592,7 @@ computed : {
                 image_file.value ="";
                 viewfilemodal_.value = false;
                 showDownload.value = false;
+                errors.value = [];
             })
         });
         const addFileUpload = ()=>{
@@ -570,13 +602,16 @@ computed : {
                     formData.append("file[]", upls[x]);
                 }
                 axios.get('sanctum/csrf-cookie').then(res=>{
+                    btn_cap_.value = "Saving...";
                     axios.post('api/uploads',formData,{
                         headers: {
                             "Content-Type": "multipart/form-data",}
                     }).then(res=>{
+                          btn_cap_.value = "Save";
                           $(uploadme.value).modal('hide');
                           listFile();
                     }).catch(err=>{
+                          btn_cap_.value = "Save";
                          if(err){
                              errors.value = err.response.data.errors
                          }
@@ -594,7 +629,31 @@ computed : {
         //     return ''+year;
         // }
         // const flow = ref(['year']);
+        
+        const showDeleteFile = (data)=>{
+            d_file.value = data;
+            $('.delete-file').modal('show');
+        }
 
+        const deletePFile = (data)=>{
+            axios.get('sanctum/csrf-cookie').then(()=>{
+                axios.delete('api/uploads/'+data.id).then((res)=>{
+                    let count = 0;
+                    for (var x = 0; x < uploads_files.value.length; x++) {
+                        if(data.id == uploads_files.value[x].id ){
+                              uploads_files.value.splice(count, 1);
+                        }
+                        count++;
+                    }
+                  
+                    listFile();
+                    $('.delete-file').modal('hide');
+                }).catch(err=>{
+                  
+                })
+            });
+        }
+        
         const options = reactive({
         onDropAccepted,
         multiple: true,
@@ -605,6 +664,8 @@ computed : {
         const { getRootProps, getInputProps, ...rest } = useDropzone(options);
       
         return {
+            showDeleteFile,
+            deletefile,
             addFileUpload,
             docs,
             getRootProps,
@@ -624,6 +685,7 @@ computed : {
             filedata,
              errors,
              btn_cap,
+             btn_cap_,
              showEditFile,
              editme,
              cancelEdit,
@@ -640,7 +702,10 @@ computed : {
              closeimgFile,
              data_,
              showDownload,
-             tableData
+             tableData,
+             d_file,
+             deletePFile,
+             uploads_files
             // format,
             // flow,
         }

@@ -34,14 +34,14 @@
 <footer class="page-footer font-small bg-footer pt-4">
     <div class="container">
 
-    <ul class="list-unstyled list-inline text-center">
+    <!-- <ul class="list-unstyled list-inline text-center">
         <li class="list-inline-item">
         <h5 class="mb-1">{{config('app.name')}}</h5>
         </li>
         <li class="list-inline-item">
-        <!-- <button type="button" class="btn btn-item-default">Sign up!</button> -->
+        <button type="button" class="btn btn-item-default">Sign up!</button>
         </li>
-    </ul>
+    </ul> -->
 
     </div>
     <div class="footer-copyright text-center py-3 bg-sub">© 2022 Copyright:
