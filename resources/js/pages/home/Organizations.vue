@@ -190,7 +190,7 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    Do you want to switch status <strong>{{ post.name }} </strong> to  <strong></strong>?
+                                    Do you want to switch status <strong>{{ post.name }} </strong> to  <strong>{{showMessageStatus()}}</strong>?
                                     
                                 </div>
                             </div>
@@ -398,7 +398,7 @@ export default {
            this.loadOrganization();
         },
         switchAccredited(data){
-            this.post.id = data.id;
+            this.post = data;
             if(data.accredited == 1){
                  this.post.accredited  = 0;
             }else{
@@ -435,6 +435,13 @@ export default {
                 this.filterdata[this.post.id] = true;
             }
             $('.switch-accredit').modal('hide');
+        },
+        showMessageStatus(){
+              if(this.post.accredited == 0){
+                  return "Unaccredited";
+              }else{
+                  return "Accredited";
+              }
         }
 
     },
