@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/newpass', [ProfileController::class, 'newPassword']);
     Route::post('/profile/check', [ProfileController::class, 'changePassword']);
     Route::resource('/profile', ProfileController::class);
+    Route::put('/org/accredit/{id}', [OrganizationController::class,'accredit']);
     Route::get('/org/individual/{id}', [OrganizationController::class,'getIndOrg']);
     Route::get('/org/restore/{id}', [OrganizationController::class,'restore']);
     Route::resource('/org', OrganizationController::class);

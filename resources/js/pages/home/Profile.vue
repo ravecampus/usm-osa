@@ -189,26 +189,26 @@ body {
 
 .form-control:focus {
     box-shadow: none;
-    border-color: #BA68C8
+    border-color: rgb(104, 200, 144)
 }
 
 .profile-button {
-    background: rgb(99, 39, 120);
+    background:#277353;
     box-shadow: none;
     border: none
 }
 
 .profile-button:hover {
-    background: #682773
+    background: #277353
 }
 
 .profile-button:focus {
-    background: #682773;
+    background: #277353;
     box-shadow: none
 }
 
 .profile-button:active {
-    background: #682773;
+    background: #277353;
     box-shadow: none
 }
 

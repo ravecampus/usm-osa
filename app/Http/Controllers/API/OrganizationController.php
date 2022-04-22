@@ -87,7 +87,14 @@ class OrganizationController extends Controller
         $dir = $request->dir;
         $archive = $request->archive;
         $searchValue = $request->search;
-        $query = Organization::where('deleted', $archive)->where('category_id',$id)->orderBy($columns[$column], $dir);
+        if($request->filter == 0){
+            $query = Organization::where('deleted', $archive)->where('category_id',$id)->orderBy($columns[$column], $dir);
+        }else if($request->filter == 1){
+            $query = Organization::where('deleted', $archive)->where('accredited', 1)->where('category_id',$id)->orderBy($columns[$column], $dir);                      
+        }else{
+            $query = Organization::where('deleted', $archive)->where('accredited', 0)->where('category_id',$id)->orderBy($columns[$column], $dir);
+        }
+       
     
         if($searchValue){
             $query->where(function($query) use ($searchValue){
@@ -159,6 +166,13 @@ class OrganizationController extends Controller
     public function restore($id){
         $categ = Organization::find($id);
         $categ->deleted = 0;
+        $categ->save();
+        return response()->json([], 200);
+    }
+
+    public function accredit(Request $request, $id){
+        $categ = Organization::find($id);
+        $categ->accredited = $request->accredited;
         $categ->save();
         return response()->json([], 200);
     }

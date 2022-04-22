@@ -24,6 +24,7 @@
         "@popperjs/core": "^2.11.4",
         "@vuepic/vue-datepicker": "^3.0.0",
         "bootstrap": "^4.0.0",
+        "bootstrap4-toggle": "^3.6.1",
         "jquery": "^3.6.0",
         "moment": "^2.29.2",
         "popper.js": "^1.12",

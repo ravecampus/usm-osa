@@ -37,6 +37,9 @@
                         <td>
                             <div class="pull-right" >
                                 <div class="btn-group">
+                                    <button type="button" @click="showDetails(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Modify">
+                                        <span class="fa fa-info-circle"></span>
+                                    </button>
                                     <button type="button" @click="showAddModalOrg(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Modify">
                                         <span class="fa fa-edit"></span>
                                     </button>
