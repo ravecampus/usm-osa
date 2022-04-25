@@ -62,7 +62,7 @@ export default {
                             this.post = {}
                             if (response.data.success) {
                                 this.login = "Sign In";
-                               window.location.href="/";
+                               window.location.href="/dashboard";
                             } else {
                                 this.error = response.data.message
                             }

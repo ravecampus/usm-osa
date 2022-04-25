@@ -31,15 +31,15 @@
                     <tr v-for = "(list, index) in categories" :key="index" class="linkTable"  >
                         
                         <td class="hand" @click="filedocpage(list)">
-                            <img class="img-icon" src="css/folder.png" alt="">&nbsp;<i>({{ list.description }})</i>
+                            <img class="img-icon" src="/../css/folder.png" alt="">&nbsp;<i>({{ list.description }})</i>
                             <strong>&nbsp;{{ list.abbreviation}}</strong > 
                         </td>
                         <td>
                             <div class="pull-right" >
                                 <div class="btn-group">
-                                    <button type="button" @click="showDetails(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Modify">
+                                    <!-- <button type="button" @click="showDetails(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Details">
                                         <span class="fa fa-info-circle"></span>
-                                    </button>
+                                    </button> -->
                                     <button type="button" @click="showAddModalOrg(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Modify">
                                         <span class="fa fa-edit"></span>
                                     </button>

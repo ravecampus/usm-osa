@@ -101,12 +101,18 @@ class FiledDocController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $columns = ['created_at', 'filename', 'description', 'id'];
+        $columns = ['year', 'filename', 'description', 'id'];
         $length = $request->length;
         $column = $request->column;
         $dir = $request->dir;
         $searchValue = $request->search;
-        $query = FiledDoc::with('files')->where('org_id', $id)->orderBy($columns[$column], $dir);
+        $semester = $request->semester;
+        $year = $request->year;
+        if($year == 0){
+            $query = FiledDoc::with('files')->where('semester', $semester)->where('org_id', $id)->orderBy($columns[$column], $dir);
+        }else{
+            $query = FiledDoc::with('files')->where('year', $year)->where('semester', $semester)->where('org_id', $id)->orderBy($columns[$column], $dir);
+        }
     
         if($searchValue){
             $query->where(function($query) use ($searchValue){

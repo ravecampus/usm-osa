@@ -1,19 +1,19 @@
 <template>
     <div class="card-body card-height">
-        <div class="blockquote bg-success text-white p-2">{{ category.description }} > {{ organization.name }} </div>
+        <div class="blockquote bg-success text-white p-2">{{ category.description }} > {{ organization.name }} > {{ showSemester() }} </div>
         <div class="row">
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <div class="card">  
                     <div class="card-body">
                         <h4><span class="fa fa-plus"></span> File Information</h4>
                         <div class="form-group">
                             <label>File Name</label>
-                            <input type="text" v-model="post.filename" class="form-control">
+                            <input type="text" v-model="post.filename" class="form-control form-control-sm">
                             <span class="errors-material" v-if="errors.filename">{{errors.filename[0]}}</span>
                         </div>
                         <div class="form-group">
                             <label>Description (Optional)</label>
-                            <textarea v-model="post.description" class="form-control"></textarea>             
+                            <textarea v-model="post.description" class="form-control form-control-sm"></textarea>             
                         </div>
                         <div class="form-group">
                             <label>Year</label>
@@ -21,18 +21,17 @@
                                 <option value="0">Year:</option>
                                 <option v-for="(year, index) in years" :key="index" :value="year">{{ year }}</option>
                             </select>
-                            <!-- <Datepicker v-model="post.year" :format="format" :flow="flow" /> -->
-                            <!-- <input type="text" v-model="post.year" class="form-control form-control-sm"> -->
                             <span class="errors-material" v-if="errors.year">{{errors.year[0]}}</span>
                         </div>
                         <div class="form-group mb-5">
                             <label>Semester</label>
                             <select v-model="post.semester" class="form-control">
-                                <option  v-for="(list, idx) in semesters" :key="idx" :value="list.val">{{ list.label }}</option>
+                                <option value="1">First Semester</option>
+                                <option value="2">Second Semester</option>
+                                
                             </select>
                             <span class="errors-material" v-if="errors.semester">{{errors.semester[0]}}</span>
                         </div>
-                        <!-- <div class="col-md-12"> -->
                         <span class="errors-material" v-if="errors.file">{{errors.file[0]}}</span>
                         <div class="box" v-bind="getRootProps()" v-if="editme" >
                             <input v-bind="getInputProps()" :acceptedFiles="['exe']">
@@ -54,60 +53,86 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <h4><span class="fa fa-list"></span> Semesters</h4>
-                <!-- <ul class="list-inline">
+            </div> -->
+            <div class="col-md-12">
+             
+                  <ul class="list-inline">
+                    <li class="list-inline-item"><h4><span class="fa fa-list"></span> List of files</h4></li>
                     <li class="list-inline-item">
+                        <button type="button" @click="showAddFile()" class="btn btn-success">
+                            <span class="fa fa-plus-circle"></span>
+                        </button>
+                    </li>
+                  </ul>
+                <div class="row mb-5">
+                    <div class="col-md-8">
                         <input type="text" class="form-control" v-model="tableData.search" @input="listFile()" placeholder="Search...">
-                    </li>
-                    <li class="list-inline-item">
-
-                    </li>
-                </ul> -->
-                <data-table >
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                        <span class="input-group-text bg-success text-white">Year</span>
+                                </div>
+                                <select v-model="tableData.year" class="form-control">
+                                     <option value="0" :selected="0">All</option> 
+                                     <option v-for="(year, index) in years" :key="index" :value="year">{{ year }}</option> 
+                                </select>
+                                <span class="input-group-append">
+                                    <button type="button" @click="filterYear()" class="btn btn-success"><i class="fa fa-filter"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <data-table :sortKey="sortKey" >
                     <tbody>
-                        <tr v-for = "(list, index) in semesters" :key="index" class="linkTable"  >
+                        <tr v-for = "(list, index) in filedata" :key="index" class="linkTable"  >
                             
-                            <td class="hand" @click="viewListFile(list)" >
+                            <td class="hand" @click="viewInfo(list)" >
                                 <!-- <img class="img-icon" src="css/folder.png" alt=""> -->
-                                <!-- <span class="badge badge-success"> -->
-                                    {{ list.val }}
-                                    <!-- <i class="fa fa-file"></i>&nbsp; -->
-                                <!-- </span> -->
-                                &nbsp;<strong>{{ list.label }}</strong>
-                         
+                                <div class="badge badge-success">
+                                    <span class="fa fa-file-text-o"></span>&nbsp;
+                                    {{ list.files.length }}
+                                </div>
+                                &nbsp;<strong>{{ list.filename }}</strong>
+                                &nbsp;<i>{{ truncate(list.description, 30,'...')}}</i > 
                             </td>
-                            <!-- <td>
+                            <td>
+                                <ul class="list-inline">
+                                    <li class="list-inline-item"> <strong>{{ list.year }}</strong></li>
+                                </ul>
+                            </td>
+                            <td>
                                 <div class="pull-right" >
                                     <div class="btn-group">
                                         <button type="button" @click="showEditFile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Modify">
                                             <span class="fa fa-edit"></span>
                                         </button>
-                                        <button type="button" @click="navButton(1,list.id)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="View Files">
+                                        <!-- <button type="button" @click="navButton(1,list.id)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="View Files">
                                             <span class="fa fa-eye"></span>
-                                        </button>
+                                        </button> -->
                                         <button type="button" @click="adduploadfile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Upload Files">
                                             <span class="fa fa-upload"></span>
                                         </button>
                                     </div>
                                 </div>
-                            </td> -->
+                            </td>
                         </tr>
-                        <!-- <tr>
+                        <tr>
                             <td colspan="2" v-show="!noData(filedata)">
                                 No Result Found!
                             </td>
-                        </tr> -->
+                        </tr>
                     </tbody>
                 </data-table>
-                <!-- <div class="col-md-12">
-                    <pagination :pagination="pagination"
-                        @prev="listFile(pagination.prevPageUrl)"
-                        @next="listFile(pagination.nextPageUrl)"
-                        v-show="noData(filedata)">
-                    </pagination>
-                </div> -->
+                <div class="col-md-12">
+                <pagination :pagination="pagination"
+                    @prev="listFile(pagination.prevPageUrl)"
+                    @next="listFile(pagination.nextPageUrl)"
+                    v-show="noData(filedata)">
+                </pagination>
+            </div>
 
              <div class="modal fade view-file" ref="viewfilemodal">
                 <div class="modal-dialog modal-lg">
@@ -131,8 +156,8 @@
                         <div class="modal-body" v-if="!viewfilemodal_">
                             <h4>FILES</h4>
                             <!-- <div class="card card-body"> -->
-                              <ul class="list-inline">
-                                <li class="list-inline-item"><strong>{{ uploads.filename }}</strong></li>
+                              <ul class="list-inline bg-success p-2 text-white">
+                                <li class="list-inline-item"><strong>{{ uploads.filename }},</strong></li>
                                 <li class="list-inline-item">{{ uploads.description }}</li>
                                 <li class="list-inline-item"> {{ loadSemester(uploads.semester) }} - {{uploads.year}}</li>
                               </ul>
@@ -241,6 +266,47 @@
             </div>
         </div>
 
+         <div class="modal fade edit-file">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h4>File Information</h4>
+                        <div class="form-group">
+                            <label>File Name</label>
+                            <input type="text" v-model="post.filename" class="form-control">
+                            <span class="errors-material" v-if="errors.filename">{{errors.filename[0]}}</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Description (Optional)</label>
+                            <textarea v-model="post.description" class="form-control"></textarea>             
+                        </div>
+                        <div class="form-group">
+                            <label>Year</label>
+                            <select v-model="post.year" class="form-control">
+                                <option value="0">Year:</option>
+                                <option v-for="(year, index) in years" :key="index" :value="year">{{ year }}</option>
+                            </select>
+                            <span class="errors-material" v-if="errors.year">{{errors.year[0]}}</span>
+                        </div>
+                        <div class="form-group mb-5">
+                            <label>Semester</label>
+                            <select v-model="post.semester" class="form-control">
+                                <option value="1">First Semester</option>
+                                <option value="2">Second Semester</option>
+                                
+                            </select>
+                            <span class="errors-material" v-if="errors.semester">{{errors.semester[0]}}</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group">
+                            <button type="button" @click="saveFiles" class="btn btn-success">{{btn_cap}}</button>
+                            <button type="button" data-dismiss="modal"  class="btn btn-default btn-sm">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </template>
@@ -248,7 +314,7 @@
 <script>
 import { ref, reactive,onMounted } from 'vue'
 import { useDropzone } from 'vue3-dropzone'
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 // import Datepicker from '@vuepic/vue-datepicker';
 // import '@vuepic/vue-datepicker/dist/main.css';
 
@@ -259,13 +325,10 @@ export default {
 components:{
         dataTable:DataTable,
         pagination:PaginationVue,
+        // Datepicker
 },
 data(){
     return{
-        semesters:[
-            {'label':'First Semester', 'val':1},
-            {'label':'Second Semester', 'val':2}
-        ],
         sfile:[],
         docs:[],
         category:{},
@@ -288,7 +351,6 @@ computed : {
 },
  setup() {
         const route = useRoute();
-        const router = useRouter()
         let docs = ref(null);
         const post = reactive({});
         const errors = ref([]);
@@ -310,7 +372,6 @@ computed : {
         const image_file = ref();
 
         function onDrop(acceptFiles, rejectReasons) {  
-            
             if(upls.length  > 0){
                 for (var x = 0; x < acceptFiles.length; x++) {
                 let fil = upls.filter((a)=>a.name == acceptFiles[x].name);
@@ -354,16 +415,17 @@ computed : {
                     }
                 
                     if(post.id > 0){
-                        // axios.put(url+post.id, post).then((res)=>{
-                        //     cancelEdit()
-                        //     listFile();
-                        //     btn_cap.value ='Save'
-                        // }).catch(err=>{
-                        //     if(err){
-                        //         errors.value = err.response.data.errors
-                        //     }
-                        //        btn_cap.value ='Save'
-                        // })
+                        axios.put(url+post.id, post).then((res)=>{
+                            $('.edit-file').modal('hide');
+                            cancelEdit()
+                            listFile();
+                            btn_cap.value ='Save'
+                        }).catch(err=>{
+                            if(err){
+                                errors.value = err.response.data.errors
+                            }
+                               btn_cap.value ='Save'
+                        })
                     }else{
                         axios.post(url, formData, {
                             headers: {
@@ -372,18 +434,14 @@ computed : {
                             errors.value = [];
                             upls = [];
                             docs.value = [];
-                            // Object.assign(post, {
-                            //     id:0,
-                            //     filename:"",
-                            //     description:"",
-                            //     year:"",
-                            //     semester:""
-                            // });
-                            // listFile();
-                            let orgid = route.params.org_id;
-                            let id = route.params.id;
-                            router.push({name:'listfiles',params:{'org_id':orgid, 'id':id, 'sem':_semester}})
-
+                            Object.assign(post, {
+                                id:0,
+                                filename:"",
+                                description:"",
+                                year:"",
+                                semester:""
+                            });
+                            listFile();
                             btn_cap.value ='Save'
                             // filedata.value.unshift(res.data)
                         }).catch((err) => {
@@ -419,12 +477,15 @@ computed : {
         });
 
         const    sortKey  = ref('created_at')
+        let seme = route.params.sem;
         const     tableData  = reactive({
                 draw:0,
                 length:6,
                 search:'',
                 column:0,
                 dir:'desc',
+                year: 0,
+                semester: seme,
                 // activate:1
             })
 
@@ -473,6 +534,7 @@ computed : {
             return data == undefined ? true : (data.length > 0) ? true : false;
         }
         const showEditFile = (data)=>{
+            $('.edit-file').modal('show');
             btn_cap.value ="Save Changes";
             editme.value = false;
             errors.value = [];
@@ -653,7 +715,10 @@ computed : {
             });
         }
         
-       
+        const filterYear = ()=>{
+            listFile();
+        }
+
         const options = reactive({
         onDropAccepted,
         multiple: true,
@@ -664,6 +729,7 @@ computed : {
         const { getRootProps, getInputProps, ...rest } = useDropzone(options);
       
         return {
+            filterYear,
             showDeleteFile,
             deletefile,
             addFileUpload,
@@ -712,49 +778,56 @@ computed : {
     },
    
     methods:{
-        truncate(text, length, suffix) {
-           if(text != null){
-                if (text.length > length) {
-                    return text.substring(0, length) + suffix;
-                } else {
-                    return text;
-                } 
-           }
-        },
-        cancel(){
-            let id = this.$route.params.org_id;
-            this.$router.push({name:'orgs', params:{'id':id}});
-        },
-        loadCategory(){  
-            let id = this.$route.params.org_id;
-           this.$axios.get('sanctum/csrf-cookie').then(response => {
-                this.$axios.get('api/category/'+id).then(res=>{
-                    this.category = res.data;
-                });
-            }) 
-        },
-        loadOrganization(){  
-                let id = this.$route.params.id;
-                this.$axios.get('sanctum/csrf-cookie').then(response => {
-                    this.$axios.get('api/org/individual/'+id).then(res=>{
-                        this.organization = res.data;
+            truncate(text, length, suffix) {
+            if(text != null){
+                    if (text.length > length) {
+                        return text.substring(0, length) + suffix;
+                    } else {
+                        return text;
+                    } 
+            }
+            },
+            cancel(){
+                let id = this.$route.params.org_id;
+                this.$router.push({name:'orgs', params:{'id':id}});
+            },
+            loadCategory(){  
+                let id = this.$route.params.org_id;
+            this.$axios.get('sanctum/csrf-cookie').then(response => {
+                    this.$axios.get('api/category/'+id).then(res=>{
+                        this.category = res.data;
                     });
                 }) 
             },
-        loadSemester(data){
-            if(data == 1){
-                return "First Semester";
-            }else{
-                return "Second Semester";
+            loadOrganization(){  
+                    let id = this.$route.params.id;
+                    this.$axios.get('sanctum/csrf-cookie').then(response => {
+                        this.$axios.get('api/org/individual/'+id).then(res=>{
+                            this.organization = res.data;
+                        });
+                    }) 
+                },
+            loadSemester(data){
+                if(data == 1){
+                    return "First Semester";
+                }else{
+                    return "Second Semester";
 
-            }
-        },
-         viewListFile(data){
-            let orgid = this.$route.params.org_id;
-            let id = this.$route.params.id;
-            this.$router.push({name:'listfiles',params:{'org_id':orgid, 'id':id, 'sem':data.val}})
-        }
-
+                }
+            },
+            showSemester(){
+                let sem = this.$route.params.sem;
+                if(sem == 1){
+                    return 'First Semester';
+                }else{
+                    return 'Second Second';
+                }
+            },
+            showAddFile(){
+                let orgid = this.$route.params.org_id;
+                let id = this.$route.params.id;
+                this.$router.push({name:'files', params:{'id':id, 'org_id':orgid}});
+            },
         },
     created(){
         this.loadCategory();
@@ -762,7 +835,7 @@ computed : {
         // this.docs = JSON.parse(localStorage.getItem('files'));
     },
     mounted(){
-      
+        
     }
 
 
@@ -782,3 +855,4 @@ computed : {
 
 }
 </style>
+ 

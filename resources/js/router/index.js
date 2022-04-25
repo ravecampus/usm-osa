@@ -1,6 +1,7 @@
 import {createWebHistory, createRouter} from "vue-router";
 
 import Home from '../pages/Home';
+import Dashboard from '../pages/Dashboard';
 import Notfound from '../pages/Notfound';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
@@ -10,6 +11,7 @@ import Organizations from '../pages/home/Organizations';
 import ArchOrg from '../pages/home/ArchOrg';
 import Profile from '../pages/home/Profile';
 import Files from '../pages/home/File';
+import Listfiles from '../pages/home/ListofFile';
 import Archive from '../pages/home/Archive';
 import Users from '../pages/home/Users';
 
@@ -18,7 +20,12 @@ export const routes = [
     {
         name: 'home',
         path: '/',
-        component: Home,
+        component: Home
+    },
+    {
+        name: 'dashboard',
+        path: '/dashboard/',
+        component: Dashboard,
         children:[
             {
                 name:'category',
@@ -50,6 +57,13 @@ export const routes = [
                 name:'files',
                 path:'/files/:id/org/:org_id',
                 component: Files,
+                props:true
+
+            },
+            {
+                name:'listfiles',
+                path:'/files/:id/org/:org_id/semester/:sem',
+                component: Listfiles,
                 props:true
 
             },
@@ -109,9 +123,7 @@ const openRoutes = [
 ];
 
 router.beforeEach((to, from, next)=>{
-    if(openRoutes.includes(to.name)){
-        next();
-    }else if(window.Laravel.isLoggedin) {
+    if(openRoutes.includes(to.name) || window.Laravel.isLoggedin){
         next();
     }
 });

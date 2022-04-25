@@ -57,7 +57,7 @@
                                     <td>
                                         <ul class="list-inline">
                                             <li class="list-inline-item">{{truncate(list.description, 30, '...')}}</li>
-                                            <li class="list-inline-item">{{ list.organization_first_registered }}</li>
+                                            <li class="list-inline-item">{{ format(new Date(list.organization_first_registered)) }}</li>
                                             <li class="list-inline-item"> <strong>{{ list.adviser }}</strong></li>
                                         </ul>
                                         
