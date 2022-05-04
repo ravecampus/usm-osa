@@ -4,6 +4,7 @@ import Home from '../pages/Home';
 import Dashboard from '../pages/Dashboard';
 import Notfound from '../pages/Notfound';
 import Register from '../pages/Register';
+import Report from '../pages/Report';
 import Login from '../pages/Login';
 import Category from '../pages/home/Category';
 import Form from '../pages/home/Form';
@@ -62,7 +63,7 @@ export const routes = [
             },
             {
                 name:'listfiles',
-                path:'/files/:id/org/:org_id/semester/:sem',
+                path:'/files/:id/org/:org_id/list',
                 component: Listfiles,
                 props:true
 
@@ -84,6 +85,11 @@ export const routes = [
         name: 'users',
         path: '/users/',
         component: Users
+    },
+    {
+        name: 'reports',
+        path: '/reports/',
+        component: Report
     },
     {
         name: 'register',

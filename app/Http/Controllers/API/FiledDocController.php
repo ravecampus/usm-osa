@@ -45,8 +45,8 @@ class FiledDocController extends Controller
     {
         $request->validate([
             'filename'=>'required',
-            'year'=>'required|digits:4|max:2050',
-            'semester'=>'required'
+            // 'year'=>'required|digits:4|max:2050',
+            // 'semester'=>'required'
         ]);
 
         $chec = FiledDoc::where('filename', $request->filename)->where('org_id',$request->org_id)->first();
@@ -61,8 +61,8 @@ class FiledDocController extends Controller
             $fileD = FiledDoc::create([
                 'filename'=>$request->filename,
                 'description'=>$request->description,
-                'year'=>$request->year,
-                'semester'=>$request->semester,
+                // 'year'=>$request->year,
+                // 'semester'=>$request->semester,
                 'date_filed' => Carbon::today(),
                 'user_id' =>$user_id,
                 'org_id'=>$request->org_id
@@ -101,19 +101,13 @@ class FiledDocController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $columns = ['year', 'filename', 'description', 'id'];
+        $columns = ['created_at', 'filename', 'description', 'id'];
         $length = $request->length;
         $column = $request->column;
         $dir = $request->dir;
         $searchValue = $request->search;
-        $semester = $request->semester;
-        $year = $request->year;
-        if($year == 0){
-            $query = FiledDoc::with('files')->where('semester', $semester)->where('org_id', $id)->orderBy($columns[$column], $dir);
-        }else{
-            $query = FiledDoc::with('files')->where('year', $year)->where('semester', $semester)->where('org_id', $id)->orderBy($columns[$column], $dir);
-        }
-    
+        $query = FiledDoc::with('files')->where('org_id', $id)->orderBy($columns[$column], $dir);
+       
         if($searchValue){
             $query->where(function($query) use ($searchValue){
                 $query->where('filename', 'like', '%'.$searchValue.'%')
@@ -146,14 +140,14 @@ class FiledDocController extends Controller
     {
         $request->validate([
             'filename'=>'required',
-            'year'=>'required|digits:4',
-            'semester'=>'required'
+            // 'year'=>'required|digits:4',
+            // 'semester'=>'required'
         ]);
 
         $file = FiledDoc::find($id);
         $file->filename = $request->filename;
-        $file->year = $request->year;
-        $file->semester = $request->semester;
+        // $file->year = $request->year;
+        // $file->semester = $request->semester;
         $file->description = $request->description;
         $file->save();
         return response()->json($file, 200);

@@ -1,6 +1,6 @@
 <template>
     <div class="card-body card-height">
-        <div class="blockquote bg-success text-white p-2">{{ category.description }} > {{ organization.name }} > {{ showSemester() }} </div>
+        <div class="blockquote bg-success text-white p-2"><a @click="categories()" class="text-white" href="#">{{ category.description }}</a> > {{ displayOrganization(organization) }} </div>
         <div class="row">
             <!-- <div class="col-md-6">
                 <div class="card">  
@@ -69,7 +69,7 @@
                         <input type="text" class="form-control" v-model="tableData.search" @input="listFile()" placeholder="Search...">
                     </div>
                     <div class="col-md-4">
-                        <div class="input-group">
+                        <!-- <div class="input-group">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                         <span class="input-group-text bg-success text-white">Year</span>
@@ -82,7 +82,7 @@
                                     <button type="button" @click="filterYear()" class="btn btn-success"><i class="fa fa-filter"></i></button>
                                 </span>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <data-table :sortKey="sortKey" >
@@ -159,7 +159,6 @@
                               <ul class="list-inline bg-success p-2 text-white">
                                 <li class="list-inline-item"><strong>{{ uploads.filename }},</strong></li>
                                 <li class="list-inline-item">{{ uploads.description }}</li>
-                                <li class="list-inline-item"> {{ loadSemester(uploads.semester) }} - {{uploads.year}}</li>
                               </ul>
                             <!-- </div> -->
                             <div class="row">
@@ -280,7 +279,7 @@
                             <label>Description (Optional)</label>
                             <textarea v-model="post.description" class="form-control"></textarea>             
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label>Year</label>
                             <select v-model="post.year" class="form-control">
                                 <option value="0">Year:</option>
@@ -296,7 +295,7 @@
                                 
                             </select>
                             <span class="errors-material" v-if="errors.semester">{{errors.semester[0]}}</span>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group">
@@ -484,8 +483,8 @@ computed : {
                 search:'',
                 column:0,
                 dir:'desc',
-                year: 0,
-                semester: seme,
+                // year: 0,
+                // semester: seme,
                 // activate:1
             })
 
@@ -828,6 +827,22 @@ computed : {
                 let id = this.$route.params.id;
                 this.$router.push({name:'files', params:{'id':id, 'org_id':orgid}});
             },
+            categories(){
+                let id = this.$route.params.org_id;
+                this.$router.push({name:'orgs',params:{'id':id}});
+            },
+            displayOrganization(data){
+                let ret = data.name == undefined ? '' : data.name+' ('+this.semesterDisplay(data.semester)+', '+ this.parseYear(data.year)+')';
+                return ret;
+            },
+            semesterDisplay(data){
+                return data == 1 ? 'Fisrt Semester' : 'Second Semester';
+            },
+            parseYear(data){
+                let re = data +' - '+parseInt(data+1);
+                let pp = data == undefined ? ' ' : re; 
+               return pp;
+            }
         },
     created(){
         this.loadCategory();

@@ -5,7 +5,7 @@
                 <div class="container px-4 px-lg-5 text-center">
                     <h1 class="mb-1">University of Southern Mindanao</h1>
                     <h3 class="mb-5"><em>Office of Student Affairs</em></h3>
-                    <router-link :to="{name:'login'}" class="btn btn-success btn-xl text-white" href="#">Sign in</router-link>
+                    <router-link :to="{name:'login'}" class="btn btn-success btn-lg text-white" href="#">Sign in</router-link>
                 </div>
             </div>
         </div>

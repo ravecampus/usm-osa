@@ -22,6 +22,12 @@ class Organization extends Model
         'deleted',
         'user_id',
         'category_id',
+        'year',
+        'semester'
     ];
+
+    public function docs(){
+        return $this->hasMany(FiledDoc::class, 'org_id', 'id')->orderBy('created_at', 'asc');
+    }
 
 }

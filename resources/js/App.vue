@@ -85,6 +85,10 @@
                                         <router-link :to="{name:'users'}" class="nav-link"><i class="fa fa-user-plus"></i> USERS</router-link>
 
                                     </li>
+                                    <li class="nav-item"  v-if="secure">
+                                        <router-link :to="{name:'reports'}" class="nav-link"><i class="fa fa-bar-chart-o"></i> REPORT</router-link>
+
+                                    </li>
                                     <!-- <li class="nav-item"  v-if="secure">
                                         <router-link class="nav-link" href="#" :to="{name:'department'}" role="button" >
                                             <i class="fa fa-plus-circle"></i> 

@@ -24,6 +24,24 @@
                                 <input type="text" v-model="post.name" class="form-control">
                                 <span class="errors-material" v-if="errors.name">{{errors.name[0]}}</span>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label>Semester</label>
+                                    <select v-model="post.semester" class="form-control">
+                                        <option  v-for="(list, idx) in semesters" :key="idx" :value="list.val">{{ list.label }}</option>
+                                    </select>
+                                    <span class="errors-material" v-if="errors.semester">{{errors.semester[0]}}</span>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label>Year</label>
+                                    <select v-model="post.year" class="form-control">
+                                        <!-- <option value="0">Year</option> -->
+                                        <option v-for="(year, index) in years" :key="index" :value="year">{{ year }}</option>
+                                    </select>
+                                    <span class="errors-material" v-if="errors.year">{{errors.year[0]}}</span>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label>Description (Optional)</label>
                                 <textarea v-model="post.description" class="form-control"></textarea>
@@ -71,14 +89,28 @@ export default {
             format,
         }
     },
+    computed : {
+        years () {
+            const year = new Date().getFullYear()
+            const date_ = 2000;
+            return Array.from({length: year - date_}, (value, index) => (date_+ 1) + index)
+        }
+    },
     data(){
         return{
            post :{
                organization_first_registered: new Date()
            },
+           semesters:[
+                {'label':'First Semester', 'val':1},
+                {'label':'Second Semester', 'val':2}
+            ],
            errors:[],
            id:0,
            category:{},
+            post:{
+                year: new Date()
+            }
         }
     },
     methods:{

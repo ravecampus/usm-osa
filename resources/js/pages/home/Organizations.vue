@@ -3,51 +3,59 @@
         <div class="row">      
             <div class="col-md-12">
                 <div class="card">
-                    <!-- <div class="card-header">
-                        <div class="row">
-                            <div class="col-md-4">
-                            </div>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control form-control-sm" v-model="tableData.search"  placeholder="Search ..." @keyup.enter="loadDepartment()">
-                            </div>
-                        </div>
-                    </div> -->
-                   
                     <div class="card-body card-height">
                         <h4>ORGANIZATIONS <i v-if="category != {}">({{ category.description }})</i></h4>
                         <div class="row">
-                            <div class="col-md-8 mb-4">
+                            <div class="col-md-4 mb-4">
                                 <input type="text" class="form-control" v-model="tableData.search"  placeholder="Search ..." @input="loadOrganization()">
                             </div>
-                            <div class="col-md-4">
-                            <div class="input-group">
+                            <div class="col-md-5">
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                            <span class="input-group-text bg-success text-white">Status</span>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-success text-white">Semesters</span>
+                                        </div>
+                                        <select v-model="semesterPost" class="form-control" @change="semesterData(semesterPost)">
+                                            <option value="0" :selected="'0'">All</option>
+                                            <option v-for="(acc,index) in semesterFilter" :key="index" v-text="acc.label"
+                                                :value="{'sem':acc.sem, 'year':acc.year}"
+                                                ></option>    
+                                        </select>
+                                        <!-- <span class="input-group-append">
+                                            <button type="button" @click="semesterData(tableData.semester)" class="btn btn-success"><i class="fa fa-filter"></i></button>
+                                        </span> -->
                                     </div>
-                                    <select v-model="tableData.filter" class="form-control">
-                                        <option v-for="(acc,index) in accredited" :key="index" v-text="acc.label"
-                                            :value="acc.val"
-                                             :selected="acc.val == '0'"
-                                            ></option>
-                                            
-                                    </select>
-                                    <span class="input-group-append">
-                                        <button type="button" @click="filterAccredited()" class="btn btn-success"><i class="fa fa-filter"></i></button>
-                                    </span>
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                                <span class="input-group-text bg-success text-white">Status</span>
+                                        </div>
+                                        <select v-model="tableData.filter" class="form-control">
+                                            <option v-for="(acc,index) in accredited" :key="index" v-text="acc.label"
+                                                :value="acc.val"
+                                                :selected="acc.val == '0'"
+                                                ></option>
+                                                
+                                        </select>
+                                        <span class="input-group-append">
+                                            <button type="button" @click="filterAccredited()" class="btn btn-success"><i class="fa fa-filter"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <button type="button" class="btn btn-default mb-2" @click="addOrg()"><span class="fa fa-plus-circle"></span> Organization</button>
                         <button type="button" class="btn btn-default mb-2" @click="archiveOrg()"><span class="fa fa-archive"></span> Archive</button>
-                        <data-table>
+                        <data-table >
                             <tbody>
                                 <tr v-for= "(list, index) in organizations" :key="index" class="linkTable" >
                                     
                                     <td @click="fileUpload(list)" class="hand" data-toggle="tooltip" data-placement="top" title="Add files">
                                          <ul class="list-inline">
-                                            <li class="list-inline-item"><span class="fa fa-angle-up"></span>
+                                            <li class="list-inline-item"><span class="fa fa-group"></span>
                                             <strong>&nbsp; {{ list.registration_number }} </strong></li>
                                             <li class="list-inline-item">{{ list.name }}</li>
                                             <li class="list-inline-item">({{ list.abbreviation }})</li>
@@ -55,19 +63,28 @@
                                         
                                     </td>
                                     <td>
-                                        <ul class="list-inline">
-                                            <li class="list-inline-item">{{truncate(list.description, 30, '...')}}</li>
-                                            <li class="list-inline-item">{{ format(new Date(list.organization_first_registered)) }}</li>
-                                            <li class="list-inline-item"> <strong>{{ list.adviser }}</strong></li>
+                                        <ul class="list-inline text-success">
+                                            <li>{{truncate(list.description, 30, '...')}}</li>
+                                            <li>{{ format(new Date(list.organization_first_registered)) }}</li>
+                                            <li> <strong>{{ list.adviser }}</strong></li>
                                         </ul>
                                         
                                     </td>
-                                    <td>                                        
-                                        <label class="switch">
-                                            <input type="checkbox" v-model="filterdata[list.id]" @change="switchAccredited(list)" :checked="setValue(list.accredited)">
-                                            <span class="slider round"></span>
-                                        </label>
-                                        <!-- <input type="checkbox" checked data-toggle="toggle" data-on="Ready" data-off="Not Ready" data-onstyle="success" data-offstyle="danger"> -->
+                                    <td>
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item text-success">{{displayOrganization(list)}}</li>
+                                        </ul>
+                                    </td>
+                                    <td>   
+                                        <ul class="list-inline">
+                                            <li><label :class="txtAccredit(list)">{{ labelAccredited(list) }}</label></li>
+                                            <li >
+                                                <label class="switch">
+                                                    <input type="checkbox" v-model="filterdata[list.id]" @change="switchAccredited(list)" :checked="setValue(list.accredited)">
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </li>
+                                        </ul>
                                     </td>
                                     <td><div class="pull-right">
                                             <div class="btn-group">
@@ -100,7 +117,7 @@
                 
             </div>
         </div>  
-            <div class="modal fade edit-org">
+            <div class="modal fade edit-org" ref="editorg">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -127,6 +144,23 @@
                                             <label>Name</label>
                                             <input type="text" v-model="post.name" class="form-control">
                                             <span class="errors-material" v-if="errors.name">{{errors.name[0]}}</span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 form-group">
+                                                <label>Semester</label>
+                                                <select v-model="post.semester" class="form-control">
+                                                    <option  v-for="(list, idx) in semesters" :key="idx" :value="list.val">{{ list.label }}</option>
+                                                </select>
+                                                <span class="errors-material" v-if="errors.semester">{{errors.semester[0]}}</span>
+                                            </div>
+                                            <div class="col-md-6 form-group">
+                                                <label>Year</label>
+                                                <select v-model="post.year" class="form-control">
+                                                    <!-- <option value="0">Year</option> -->
+                                                    <option v-for="(year, index) in years" :key="index" :value="year">{{ year }}</option>
+                                                </select>
+                                                <span class="errors-material" v-if="errors.year">{{errors.year[0]}}</span>
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label>Description (Optional)</label>
@@ -247,16 +281,26 @@ export default {
             sortOrders[column.name] = -1;
         });
         return{
+           
             filterdata:[],
+            semesterFilter:[],
             category:{},
             id:0,
-            post :{},
+            post :{
+                year: new Date()
+                },
             errors:[],
             btn_cap:"Save Changes",
             organizations : [],
             columns:columns,
             sortOrders:sortOrders,
             sortKey:'created_at',
+            semesterPost:{},
+            not_found:false,
+            semesters:[
+                {'label':'First Semester', 'val':1},
+                {'label':'Second Semester', 'val':2}
+            ],
             accredited:[
                 {'label':'All','val':0},
                 {'label':'Accredited','val':1},
@@ -270,6 +314,8 @@ export default {
                 dir:'desc',
                 archive:0,
                 filter:0,
+                sem:0,
+                yr:0,
             },
             pagination:{
                 lastPage:'',
@@ -281,24 +327,26 @@ export default {
                 from:'',
                 to:''
             },
-            not_found:false
+
         }
     },
-    created(){
-        this.id = this.$route.params.id;
-        this.loadOrganization();
-        this.loadCategory();
+    computed : {
+        years () {
+            const year = new Date().getFullYear()
+            const date_ = 2000;
+            return Array.from({length: year - date_}, (value, index) => (date_+ 1) + index)
+        }
     },
     methods:{
-        loadOrganization(url = 'api/org/'){
-             let id = this.$route.params.id;
-             this.$axios.get('sanctum/csrf-cookie').then(response => {
+        async loadOrganization(url = 'api/org/'+this.id){
+             await this.$axios.get('sanctum/csrf-cookie').then(response => {
                 this.tableData.draw ++;
-                this.$axios.get(url+id,{params:this.tableData}).then(res=>{
+                this.$axios.get(url,{params:this.tableData}).then(res=>{
                 let data = res.data;
                     if(this.tableData.draw == data.draw){
                         this.organizations = data.data.data;
                         this.configPagination(data.data);
+                        this.loadListOrg();
                     }else{
                         this.not_found = true;
                     }
@@ -318,16 +366,16 @@ export default {
             this.pagination.from = data.from;
             this.pagination.to = data.to;
         },
-        sortBy(key){
-            if(key != null){
-                this.sortKey = key;
-                this.sortOrders[key] = this.sortOrders[key] * -1;
-                this.tableData.column = this.getIndex(this.columns, 'name', key);
-                this.tableData.dir = this.sortOrders[key] === 1 ? 'asc' : 'desc';
-                this.loadOrganization();
-            }
+        // sortBy(key){
+        //     if(key != null){
+        //         this.sortKey = key;
+        //         this.sortOrders[key] = this.sortOrders[key] * -1;
+        //         this.tableData.column = this.getIndex(this.columns, 'name', key);
+        //         this.tableData.dir = this.sortOrders[key] === 1 ? 'asc' : 'desc';
+        //         this.loadOrganization();
+        //     }
             
-        },
+        // },
         getIndex(array, key, value){
             return array.findIndex(i=>i[key] == value)
         },
@@ -357,7 +405,7 @@ export default {
                 this.$router.push({name:'arcorg', params:{'id':this.id}});
         },
         fileUpload(list){
-            this.$router.push({name:'files',
+            this.$router.push({name:'listfiles',
              params:{'id':list.id, 'org_id':this.id}
              });
         },
@@ -388,6 +436,7 @@ export default {
                 this.$axios.delete('api/org/'+data.id).then(res=>{
                     this.post = {};
                     this.loadOrganization();
+                    this.loadListOrg();
                     $('.archive-org').modal('hide');
                 }).catch(err=>{
 
@@ -442,15 +491,88 @@ export default {
               }else{
                   return "Accredited";
               }
+        },
+        displayOrganization(data){
+            let ret = data.name == undefined ? '' :' ('+this.semesterDisplay(data.semester)+', '+ this.parseYear(data.year)+')';
+            return ret;
+        },
+        semesterDisplay(data){
+            return data == 1 ? 'Fisrt Semester' : 'Second Semester';
+        },
+        parseYear(data){
+            let re = data +' - '+parseInt(data+1);
+            let pp = data == undefined ? ' ' : re; 
+            return pp;
+        },
+        labelAccredited(list){
+            return list.accredited == 1 ? 'ACCREDITED' : 'UNACCREDITED';
+        },
+        txtAccredit(data){
+            return data.accredited == 1 ? 'text-success':'text-grey';
+        },
+        loadListOrg(){
+             let id = this.$route.params.id;
+             this.$axios.get('sanctum/csrf-cookie').then(response => {
+                this.$axios.get('api/org/list/'+id).then(res=>{
+                    // console.log(res.data);
+                    this.loadFilter(res.data);    
+                }).catch(err=>{
+                   
+                });
+            });
+        },
+        loadFilter(data){
+            let unique = data
+            .map(item => {
+                let dis = this.semesterExt(item.semester) +', '+item.year+' - '+ parseInt(item.year + 1)
+                return ({
+                    'label':dis,
+                    'sem':item.semester,
+                    'year':item.year,
+                    'id':item.year+'-'+item.semester,
+                    });
+            })
+            this.semesterFilter = this.useUnique(unique,(a, b) => a.id == b.id);
+        },
+        useUnique(vl,fn){
+           let arr =  vl.reduce((acc, v) => {
+                if (!acc.some(x => fn(v, x))) acc.push(v);
+                return acc;
+            },[])
+            return this.sortOrder(arr); 
+        },
+        extractMe(data){
+            return _.uniq(_.map(data, 'label'))
+        },
+        sortOrder(data){
+            return _.orderBy(data, 'year', 'desc');
+        },
+        semesterExt(data){
+            return data == 1? 'First Semester' : 'Second Semester';
+        },
+        semesterData(data){
+            this.tableData['sem'] = data.sem;
+            this.tableData['yr'] = data.year;
+            this.loadOrganization();
         }
 
     },
      mounted(){
+        
         $(this.$refs.switchaccred).on("hidden.bs.modal", () => {
             this.loadOrganization();
         })
+
+        $(this.$refs.editorg).on('hidden.bs.modal', ()=>{
+            this.loadOrganization();
+        });
     },
-   
+    created(){
+        this.id = this.$route.params.id;
+        this.loadOrganization();
+        this.loadCategory();
+        this. loadListOrg();
+    },
 }
 </script>
 

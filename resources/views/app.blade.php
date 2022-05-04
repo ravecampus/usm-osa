@@ -44,7 +44,7 @@
     </ul> -->
 
     </div>
-    <div class="footer-copyright text-center py-3 bg-sub">© 2022 Copyright:
+    <div class="footer-copyright text-center py-3 bg-sub d-print-none">© 2022 Copyright:
         <a href="#">{{config('app.name')}}</a>
     </div>
 </footer>

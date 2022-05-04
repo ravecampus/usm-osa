@@ -8,6 +8,7 @@ use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\FiledDocController;
 use App\Http\Controllers\API\UploadController;
 use App\Http\Controllers\API\ProfileController;
+use App\Http\Controllers\API\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/check', [ProfileController::class, 'changePassword']);
     Route::resource('/profile', ProfileController::class);
     Route::put('/org/accredit/{id}', [OrganizationController::class,'accredit']);
+    Route::get('/org/list/{id}', [OrganizationController::class,'lista']);
     Route::get('/org/individual/{id}', [OrganizationController::class,'getIndOrg']);
     Route::get('/org/restore/{id}', [OrganizationController::class,'restore']);
     Route::resource('/org', OrganizationController::class);
@@ -46,4 +48,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/filed-docs', FiledDocController::class);
     Route::get('/download-file/{id}', [UploadController::class, 'downloadFile']);
     Route::resource('/uploads', UploadController::class);
+    Route::get('/report/filter', [ReportController::class,'filter']);
+    Route::get('/report/categories', [ReportController::class,'categories']);
+    Route::get('/report/org/{id}', [ReportController::class,'org']);
+    Route::resource('/report', ReportController::class);
 });

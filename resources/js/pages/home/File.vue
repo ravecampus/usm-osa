@@ -1,6 +1,6 @@
 <template>
     <div class="card-body card-height">
-        <div class="blockquote bg-success text-white p-2">{{ category.description }} > {{ organization.name }} </div>
+        <div class="blockquote bg-success text-white p-2"><a @click="categories()" class="text-white" href="#">{{ category.description }}</a> > {{ displayOrganization(organization) }} </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="card">  
@@ -15,24 +15,6 @@
                             <label>Description (Optional)</label>
                             <textarea v-model="post.description" class="form-control"></textarea>             
                         </div>
-                        <div class="form-group">
-                            <label>Year</label>
-                            <select v-model="post.year" class="form-control">
-                                <option value="0">Year:</option>
-                                <option v-for="(year, index) in years" :key="index" :value="year">{{ year }}</option>
-                            </select>
-                            <!-- <Datepicker v-model="post.year" :format="format" :flow="flow" /> -->
-                            <!-- <input type="text" v-model="post.year" class="form-control form-control-sm"> -->
-                            <span class="errors-material" v-if="errors.year">{{errors.year[0]}}</span>
-                        </div>
-                        <div class="form-group mb-5">
-                            <label>Semester</label>
-                            <select v-model="post.semester" class="form-control">
-                                <option  v-for="(list, idx) in semesters" :key="idx" :value="list.val">{{ list.label }}</option>
-                            </select>
-                            <span class="errors-material" v-if="errors.semester">{{errors.semester[0]}}</span>
-                        </div>
-                        <!-- <div class="col-md-12"> -->
                         <span class="errors-material" v-if="errors.file">{{errors.file[0]}}</span>
                         <div class="box" v-bind="getRootProps()" v-if="editme" >
                             <input v-bind="getInputProps()" :acceptedFiles="['exe']">
@@ -56,134 +38,83 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <h4><span class="fa fa-list"></span> Semesters</h4>
-                <!-- <ul class="list-inline">
-                    <li class="list-inline-item">
-                        <input type="text" class="form-control" v-model="tableData.search" @input="listFile()" placeholder="Search...">
-                    </li>
-                    <li class="list-inline-item">
-
-                    </li>
-                </ul> -->
-                <data-table >
-                    <tbody>
-                        <tr v-for = "(list, index) in semesters" :key="index" class="linkTable"  >
-                            
-                            <td class="hand" @click="viewListFile(list)" >
-                                <!-- <img class="img-icon" src="css/folder.png" alt=""> -->
-                                <!-- <span class="badge badge-success"> -->
-                                    {{ list.val }}
-                                    <!-- <i class="fa fa-file"></i>&nbsp; -->
-                                <!-- </span> -->
-                                &nbsp;<strong>{{ list.label }}</strong>
-                         
-                            </td>
-                            <!-- <td>
-                                <div class="pull-right" >
-                                    <div class="btn-group">
-                                        <button type="button" @click="showEditFile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Modify">
-                                            <span class="fa fa-edit"></span>
-                                        </button>
-                                        <button type="button" @click="navButton(1,list.id)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="View Files">
-                                            <span class="fa fa-eye"></span>
-                                        </button>
-                                        <button type="button" @click="adduploadfile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Upload Files">
-                                            <span class="fa fa-upload"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </td> -->
-                        </tr>
-                        <!-- <tr>
-                            <td colspan="2" v-show="!noData(filedata)">
-                                No Result Found!
-                            </td>
-                        </tr> -->
-                    </tbody>
-                </data-table>
-                <!-- <div class="col-md-12">
-                    <pagination :pagination="pagination"
-                        @prev="listFile(pagination.prevPageUrl)"
-                        @next="listFile(pagination.nextPageUrl)"
-                        v-show="noData(filedata)">
-                    </pagination>
-                </div> -->
-
-             <div class="modal fade view-file" ref="viewfilemodal">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <!-- <div class="modal-header">
-                            <h4>ORGANIZATION</h4>
-                        </div> -->
-                        <div class="modal-body" >
-                            
-                        </div>
-                        <div class="modal-body" v-if="viewfilemodal_">
-                            <div class="card card-body">
-                                <div class="btn-group" v-if="showDownload">
-                                    <button type="button" @click="downloadFile(data_)" Class="btn btn-success"><span class="fa fa-download"> </span> Download</button>
-                                    <button type="button" @click="closeimgFile" Class="btn btn-default"> Cancel</button>
-                                </div>  
-                                <img  class="img-responsive" :src="image_file" v-if="!showDownload"/>
-                                <button type="button" @click="closeimgFile" v-if="!showDownload" Class="btn btn-default">close</button>
-                            </div>
-                        </div>
-                        <div class="modal-body" v-if="!viewfilemodal_">
-                            <h4>FILES</h4>
-                            <!-- <div class="card card-body"> -->
-                              <ul class="list-inline">
-                                <li class="list-inline-item"><strong>{{ uploads.filename }}</strong></li>
-                                <li class="list-inline-item">{{ uploads.description }}</li>
-                                <li class="list-inline-item"> {{ loadSemester(uploads.semester) }} - {{uploads.year}}</li>
-                              </ul>
-                            <!-- </div> -->
-                            <div class="row">
-                                <div class="col-md-12">                       
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>Original Name</th>
-                                                    <th>Extension</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for ="(list,x) in uploads_files" :key="x">
-                                                    <td>{{list.original_name}}</td>
-                                                    <td>{{list.extension}}</td>
-                                                    <td>
-                                                        <div class="btn-group">
-                                                            <button type="button" @click="viewFile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="View Files">
-                                                                <span class="fa fa-eye"></span>
-                                                            </button>
-                                                            <button type="button" @click="downloadFile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Download">
-                                                                <span class="fa fa-download"></span>
-                                                            </button>
-                                                            <button type="button" @click="showDeleteFile(list, x)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Delete">
-                                                                <span class="fa fa-trash"></span>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                            
-                                        </table>        
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div class="modal-footer">
-                            <div class="btn-group">
-                                <button type="button"  @click="updateOrg"  class="btn btn-success">{{ btn_cap }}</button>
-                                <button type="button" data-dismiss="modal"  class="btn btn-default">Cancel</button>
-                            </div>
-                        </div> -->
-                    </div>
-                </div>
+               
             </div>
+        </div>
 
+
+        <div class="modal fade view-file" ref="viewfilemodal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- <div class="modal-header">
+                        <h4>ORGANIZATION</h4>
+                    </div> -->
+                    <div class="modal-body" >
+                        
+                    </div>
+                    <div class="modal-body" v-if="viewfilemodal_">
+                        <div class="card card-body">
+                            <div class="btn-group" v-if="showDownload">
+                                <button type="button" @click="downloadFile(data_)" Class="btn btn-success"><span class="fa fa-download"> </span> Download</button>
+                                <button type="button" @click="closeimgFile" Class="btn btn-default"> Cancel</button>
+                            </div>  
+                            <img  class="img-responsive" :src="image_file" v-if="!showDownload"/>
+                            <button type="button" @click="closeimgFile" v-if="!showDownload" Class="btn btn-default">close</button>
+                        </div>
+                    </div>
+                    <div class="modal-body" v-if="!viewfilemodal_">
+                        <h4>FILES</h4>
+                        <!-- <div class="card card-body"> -->
+                            <ul class="list-inline">
+                            <li class="list-inline-item"><strong>{{ uploads.filename }}</strong></li>
+                            <li class="list-inline-item">{{ uploads.description }}</li>
+                            <li class="list-inline-item"> {{ loadSemester(uploads.semester) }} - {{uploads.year}}</li>
+                            </ul>
+                        <!-- </div> -->
+                        <div class="row">
+                            <div class="col-md-12">                       
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Original Name</th>
+                                                <th>Extension</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for ="(list,x) in uploads_files" :key="x">
+                                                <td>{{list.original_name}}</td>
+                                                <td>{{list.extension}}</td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button type="button" @click="viewFile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="View Files">
+                                                            <span class="fa fa-eye"></span>
+                                                        </button>
+                                                        <button type="button" @click="downloadFile(list)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Download">
+                                                            <span class="fa fa-download"></span>
+                                                        </button>
+                                                        <button type="button" @click="showDeleteFile(list, x)" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Delete">
+                                                            <span class="fa fa-trash"></span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        
+                                    </table>        
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                        <div class="btn-group">
+                            <button type="button"  @click="updateOrg"  class="btn btn-success">{{ btn_cap }}</button>
+                            <button type="button" data-dismiss="modal"  class="btn btn-default">Cancel</button>
+                        </div>
+                    </div> -->
+                </div>
             </div>
         </div>
 
@@ -344,8 +275,8 @@ computed : {
                     let _year = post.year == undefined ? "" : post.year;
                     let _semester = post.semester == undefined ? "" : post.semester;
                    
-                    formData.append('year',_year);
-                    formData.append('semester',_semester);
+                    // formData.append('year',_year);
+                    // formData.append('semester',_semester);
                     formData.append('filename',_name);
                     formData.append('description',_file_description);
                     formData.append('org_id',org_id);
@@ -382,7 +313,7 @@ computed : {
                             // listFile();
                             let orgid = route.params.org_id;
                             let id = route.params.id;
-                            router.push({name:'listfiles',params:{'org_id':orgid, 'id':id, 'sem':_semester}})
+                            router.push({name:'listfiles',params:{'org_id':orgid, 'id':id}})
 
                             btn_cap.value ='Save'
                             // filedata.value.unshift(res.data)
@@ -722,8 +653,9 @@ computed : {
            }
         },
         cancel(){
-            let id = this.$route.params.org_id;
-            this.$router.push({name:'orgs', params:{'id':id}});
+            let id = this.$route.params.id;
+            let orgid = this.$route.params.org_id;
+            this.$router.push({name:'listfiles', params:{'org_id':orgid, 'id':id}});
         },
         loadCategory(){  
             let id = this.$route.params.org_id;
@@ -753,6 +685,22 @@ computed : {
             let orgid = this.$route.params.org_id;
             let id = this.$route.params.id;
             this.$router.push({name:'listfiles',params:{'org_id':orgid, 'id':id, 'sem':data.val}})
+        },
+        categories(){
+            let id = this.$route.params.org_id;
+            this.$router.push({name:'orgs',params:{'id':id}});
+        },
+        displayOrganization(data){
+            let ret = data.name == undefined ? '' : data.name+' ('+this.semesterDisplay(data.semester)+', '+ this.parseYear(data.year)+')';
+            return ret;
+        },
+        semesterDisplay(data){
+            return data == 1 ? 'Fisrt Semester' : 'Second Semester';
+        },
+        parseYear(data){
+            let re = data +' - '+parseInt(data+1);
+            let pp = data == undefined ? ' ' : re; 
+            return pp;
         }
 
         },

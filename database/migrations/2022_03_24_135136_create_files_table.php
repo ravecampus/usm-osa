@@ -17,8 +17,6 @@ class CreateFilesTable extends Migration
             $table->id();
             $table->string('filename')->nullable();
             $table->string('description')->nullable();
-            $table->year('year');
-            $table->integer('semester')->default(0);
             $table->datetime('date_filed');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -16,7 +16,7 @@ class OrganizationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
        
     }
@@ -45,6 +45,8 @@ class OrganizationController extends Controller
             'description'=>'nullable',
             'abbreviation'=>'required',
             'registration_number'=>'required',
+            'year'=>'required|digits:4|max:2050',
+            'semester'=>'required',
             'organization_first_registered'=>'required',
             'adviser'=>'required',
         ]);
@@ -66,6 +68,8 @@ class OrganizationController extends Controller
             'registration_number'=>$request->registration_number,
             'organization_first_registered'=> Carbon::parse($request->organization_first_registered)->format('Y-m-d'),
             'adviser'=>$request->adviser,
+            'year'=>$request->year,
+            'semester'=>$request->semester,
             'abbreviation'=>$request->abbreviation,
             'category_id'=>$request->category_id,
             'user_id'=>Auth::id()
@@ -81,24 +85,42 @@ class OrganizationController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $columns = ['created_at', 'department', 'id'];
+        $columns = ['created_at', 'description', 'id'];
+
         $length = $request->length;
         $column = $request->column;
         $dir = $request->dir;
+
         $archive = $request->archive;
         $searchValue = $request->search;
-        if($request->filter == 0){
-            $query = Organization::where('deleted', $archive)->where('category_id',$id)->orderBy($columns[$column], $dir);
-        }else if($request->filter == 1){
-            $query = Organization::where('deleted', $archive)->where('accredited', 1)->where('category_id',$id)->orderBy($columns[$column], $dir);                      
+        $year = $request->yr;
+        $sem = $request->sem;
+
+        $fv = $request->filter == 1 ? 1 : 0;
+        if($request->filter > 0 && $sem > 0){
+            $query = Organization::where('deleted', $archive)
+            ->where('year', $year)->where('semester',$sem)
+            ->where('accredited', $fv)
+            ->where('category_id',$id)->orderBy($columns[$column], $dir);            
+        }else if($request->filter > 0 && $sem == 0){
+            $query = Organization::where('deleted', $archive)
+            ->where('accredited', $fv)
+            ->where('category_id',$id)->orderBy($columns[$column], $dir);                    
+        }else if($request->filter == 0 && $sem > 0){
+            $query = Organization::where('deleted', $archive)
+            ->where('year', $year)->where('semester',$sem)
+            ->where('category_id',$id)->orderBy($columns[$column], $dir);
         }else{
-            $query = Organization::where('deleted', $archive)->where('accredited', 0)->where('category_id',$id)->orderBy($columns[$column], $dir);
+            $query = Organization::where('deleted', $archive)
+            ->where('category_id',$id)->orderBy($columns[$column], $dir);
         }
-       
-    
+        
         if($searchValue){
             $query->where(function($query) use ($searchValue){
-                $query->where('description', 'like', '%'.$searchValue.'%');
+                $query->where('description', 'like', '%'.$searchValue.'%')
+                ->orWhere('name', 'like', '%'.$searchValue.'%')
+                ->orWhere('abbreviation', 'like', '%'.$searchValue.'%')
+                ->orWhere('registration_number', 'like', '%'.$searchValue.'%');
             });
         }
         $projects = $query->paginate($length);
@@ -130,7 +152,9 @@ class OrganizationController extends Controller
             'name'=>'required',
             'organization_first_registered'=>'required',
             'adviser'=>'required',
-            'abbreviation' => 'required'
+            'abbreviation' => 'required',
+            'year'=>'required|digits:4|max:2050',
+            'semester'=>'required',
         ]);
 
         $org = Organization::find($id);
@@ -139,6 +163,8 @@ class OrganizationController extends Controller
         $org->organization_first_registered = Carbon::parse($request->organization_first_registered)->format('Y-m-d');
         $org->adviser = $request->adviser;
         $org->description = $request->description;
+        $org->year = $request->year;
+        $org->semester = $request->semester;
         $org->abbreviation = $request->abbreviation;
         $org->save();
     }
@@ -175,5 +201,10 @@ class OrganizationController extends Controller
         $categ->accredited = $request->accredited;
         $categ->save();
         return response()->json([], 200);
+    }
+
+    public function lista($id){
+        $org = Organization::where('category_id',$id)->where('deleted',0)->get();
+        return response()->json($org, 200);
     }
 }
