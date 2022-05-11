@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Organization;
 use App\Models\Category;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\OrgExport;
 
 class ReportController extends Controller
 {
@@ -102,7 +104,8 @@ class ReportController extends Controller
         return response()->json($org, 200);
     }
 
-    public function filter(Request $request){
+    public function getFilter(Request $request){
+
         $columns = ['name','registration_number','category_id','organization_first_registered','abbreviation'];
         $sort = $request->sort;
         $key = $request->key;
@@ -118,10 +121,21 @@ class ReportController extends Controller
         }else{
             $query = Organization::orderBy($columns[$sort], $key);
         }
-        $proj = $query->with('docs')->where('accredited', 1)->get();
+        $proj = $query->with('category')->with('docs')->where('accredited', 1)->get();
+        return $proj;
+    }
 
-      return response()->json($proj,200);
+    public function filter(Request $request){
+      $ret = $this->getFilter($request);
+      return response()->json($ret,200);
+    }
 
 
+    public function exportExcel(Request $request){
+        $ret = $this->getFilter($request);
+        $lbl = isset($request->semester) ?  $request->sem_lbl :"";
+        Excel::store(new OrgExport($ret,$lbl),'public/excel/organ.xlsx');
+        $path = storage_path('app/public/excel/organ.xlsx');
+        return response()->download($path);
     }
 }

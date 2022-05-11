@@ -36,7 +36,8 @@
                                     <label>Year</label>
                                     <select v-model="post.year" class="form-control">
                                         <!-- <option value="0">Year</option> -->
-                                        <option v-for="(year, index) in years" :key="index" :value="year">{{ year }}</option>
+                                        <option v-for="(year, index) in years" :key="index" 
+                                        :value="year">{{ year }}</option>
                                     </select>
                                     <span class="errors-material" v-if="errors.year">{{errors.year[0]}}</span>
                                 </div>
@@ -98,9 +99,6 @@ export default {
     },
     data(){
         return{
-           post :{
-               organization_first_registered: new Date()
-           },
            semesters:[
                 {'label':'First Semester', 'val':1},
                 {'label':'Second Semester', 'val':2}
@@ -109,7 +107,9 @@ export default {
            id:0,
            category:{},
             post:{
-                year: new Date()
+                semester:1,
+                organization_first_registered: new Date(),
+                year: new Date().getFullYear(),
             }
         }
     },

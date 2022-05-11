@@ -45,12 +45,12 @@
                         </tbody>
                         </data-table>
                         <div class="table-footer">
-                        <pagination :pagination="pagination"
-                            @prev="listOfDepartment(pagination.prevPageUrl)"
-                            @next="listOfDepartment(pagination.nextPageUrl)"
-                            v-show="noData(departments)">
-                        </pagination>
-                    </div>
+                            <pagination :pagination="pagination"
+                                @prev="listOfDepartment(pagination.prevPageUrl)"
+                                @next="listOfDepartment(pagination.nextPageUrl)"
+                                v-show="noData(departments)">
+                            </pagination>
+                        </div>
                 </div>
 
            </div>

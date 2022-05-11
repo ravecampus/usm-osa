@@ -36,6 +36,10 @@
                                             Print
                                             <span class="fa fa-print"></span>
                                         </button>
+                                        <button type="button" @click="ExportExcel" v-if="rep" class="btn btn-success btn-lg">
+                                            Export
+                                            <span class="fa fa-file-excel-o"></span>
+                                        </button>
                                         <button type="button" @click="Reset" v-if="rep" class="btn btn-success btn-lg">
                                             Reset
                                             <span class="fa fa-refresh"></span>
@@ -287,7 +291,6 @@ export default {
            this.lenShow = '...';
             this.$axios.get('sanctum/csrf-cookie').then(response=>{
                 this.$axios.get('api/report/filter',{params:this.post}).then(res=>{
-                    console.log(res.data);
                     this.showLen(res.data);
                     this.generatedList = res.data;
                 });
@@ -336,6 +339,22 @@ export default {
         categoryUpdate(data){
             this.category_id = data.category;
             this.loadListOrg(data);
+        },
+        ExportExcel(){
+           this.post['sem_lbl'] = this.semdis;
+            this.$axios.get('sanctum/csrf-cookie').then(response=>{
+                this.$axios.get('api/report/export',{params:this.post,responseType: 'blob',}).then(res=>{
+                    let blob = new Blob([res.data])
+                    let link = document.createElement('a')
+                    link.href = window.URL.createObjectURL(blob)
+                    link.setAttribute('download', 'organization.xlsx');
+                    // link.download = data.original_name+'.'+data.extension;
+                    document.body.appendChild(link);
+                    link.click()
+
+                    
+                });
+            });
         }
     },
     mounted(){

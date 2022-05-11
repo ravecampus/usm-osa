@@ -30,4 +30,11 @@ class Organization extends Model
         return $this->hasMany(FiledDoc::class, 'org_id', 'id')->orderBy('created_at', 'asc');
     }
 
+    public function category(){
+        return $this->hasOne(Category::class, 'id', 'category_id');
+    }
+
+
+
+
 }

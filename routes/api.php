@@ -49,6 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/download-file/{id}', [UploadController::class, 'downloadFile']);
     Route::resource('/uploads', UploadController::class);
     Route::get('/report/filter', [ReportController::class,'filter']);
+    Route::get('/report/export', [ReportController::class,'exportExcel']);
     Route::get('/report/categories', [ReportController::class,'categories']);
     Route::get('/report/org/{id}', [ReportController::class,'org']);
     Route::resource('/report', ReportController::class);
